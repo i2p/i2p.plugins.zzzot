@@ -100,6 +100,7 @@ public class ZzzOTController {
         }
         startJetty(pluginDir, dest);
         startI2PTunnel(pluginDir, dest);
+        // SeedlessAnnouncer.announce(_tunnel);
     }
 
 

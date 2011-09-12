@@ -10,6 +10,7 @@
         <pathelement location="${i2plib}/i2p.jar" />
         <pathelement location="${i2plib}/i2ptunnel.jar" />
         <pathelement location="${i2plib}/i2psnark.jar" />
+        <pathelement location="${i2plib}/mstreaming.jar" />
         <pathelement location="${jettylib}/ant.jar"/>
         <pathelement location="${jettylib}/org.mortbay.jetty.jar"/>
         <pathelement location="${jettylib}/jasper-compiler.jar" />
@@ -33,7 +34,8 @@
             srcdir="./java" 
             debug="true" deprecation="on" source="1.5" target="1.5" 
             destdir="./build/obj" 
-            classpath="${i2plib}/i2p.jar:${i2plib}/i2ptunnel.jar:${i2plib}/i2psnark.jar:${i2plib}/systray.jar:${i2plib}/org.mortbay.jetty.jar" >
+            includeAntRuntime="false"
+            classpath="${i2plib}/i2p.jar:${i2plib}/i2ptunnel.jar:${i2plib}/i2psnark.jar:${i2plib}/mstreaming.jar:${i2plib}/systray.jar:${i2plib}/org.mortbay.jetty.jar" >
             <compilerarg line="${javac.compilerargs}" />
         </javac>
     </target>
@@ -69,6 +71,7 @@
             destdir="build/war/WEB-INF/classes"
             srcdir="./build/jspjava"
             includes="**/*.java"
+            includeAntRuntime="false"
             classpathref="jspcp"
             failonerror="true" />
 
