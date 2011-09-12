@@ -27,11 +27,13 @@
 		me = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.b32.i2p";
 	// unused, we don't accept announces
 	String him = request.getHeader("X-I2P-DestB32");
+	if (him == null)
+		him = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.b32.i2p";
         String xff = request.getHeader("X-Forwarded-For");
         String xfs = request.getHeader("X-Forwarded-Server");
 
 	response.setContentType("text/plain");
-	response.setHeader("X-Seedless", me);
+	response.setHeader("X-Seedless", him);
 
 	final int US_MINUTES = 360;
 	final int PEER_MINUTES = 60;
@@ -47,12 +49,17 @@
 		out.println("seedless " + US_MINUTES);
 	} else if (req.startsWith("announce")) {
 		out.println("thanks");
-	} else if (req.startsWith("locate")) {
+	} else if (req.startsWith("locate c2VlZGxlc")) {  // locate b64(seedless)
 		// ignore the search string, if any, in the request
 		// us
 		out.println(Base64.encode(me + ' ' + US_MINUTES + " tracker"));
 		out.println(Base64.encode(me + ' ' + US_MINUTES + " seedless"));
 		out.println(Base64.encode(me + ' ' + US_MINUTES + " eepsite"));
+	} else if (req.startsWith("locate ZWVwc2l0Z")) {  // locate b64(eepsite)
+		// ignore the search string, if any, in the request
+		// us
+		out.println(Base64.encode(me + ' ' + US_MINUTES + " zzzot"));
+	} else if (req.startsWith("locate dG9ycmVud")) {  // locate b64(torrent)
 		// all the peers
 		Torrents torrents = ZzzOTController.getTorrents();
 		for (InfoHash ihash : torrents.keySet()) {
@@ -68,19 +75,20 @@
 				// service type
 				String role;
 				if (p.isSeed())
-					role = " bt-seed";
+					role = "seed";
 				else
-					role = " bt-leech";
+					role = "leech";
 				// spg wants UTF-8 but all we have is binary data, so hex it
 				String ihs = DataHelper.toHexString(ihash.getData());
 				String ids = DataHelper.toHexString((byte[])p.get("peer id"));
-				out.println(Base64.encode(b32 + PEER_MINUTES + role +
-				                          " info_hash=" + ihs +
-				                          ";peer_id=" + ids));
+				out.println(Base64.encode(b32 + PEER_MINUTES + ihs + '\n' +
+				                          ids + '\n' +
+				                          role));
 			}
 		}
 	} else {
 		// error code
+		response.setStatus(406, "Bad request");
 		out.println("SC_NOT_ACCEPTABLE");
 	}
 
