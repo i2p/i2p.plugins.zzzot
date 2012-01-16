@@ -1,7 +1,7 @@
 This is a very simple in-memory open tracker, wrapped into an I2P plugin.
 
 The plugin starts a new http serer tunnel, eepsite, and Jetty server running at port 7662.
-The tracker status is available at http://127.0.0.1:7661/tracker/ .
+The tracker status is available at http://127.0.0.1:7662/tracker/ .
 If other files are desired on the eepsite, they can be added at eepsite/docroot .
 
 The open tracker code and jsps were written from scratch, but depend on some code
