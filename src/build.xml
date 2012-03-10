@@ -3,8 +3,6 @@
     <property name="i2pbase" value="../../i2p.i2p"/>
     <property name="i2plib" value="${i2pbase}/build"/>
     <property name="jettylib" value="${i2pbase}/apps/jetty/jettylib"/>
-    <property name="war" value="../plugin/eepsite/webapps/blog"/>
-    <property name="lib" value="${war}/WEB-INF/lib"/>
     <path id="cp">
         <pathelement path="${java.class.path}" />
         <pathelement location="${i2plib}/i2p.jar" />
@@ -16,6 +14,7 @@
         <pathelement location="${jettylib}/jasper-compiler.jar" />
         <pathelement location="${jettylib}/jasper-runtime.jar" />
         <pathelement location="${jettylib}/javax.servlet.jar" />
+        <pathelement location="${jettylib}/jetty-util.jar" />
         <pathelement location="${jettylib}/commons-logging.jar" />
         <pathelement location="${jettylib}/commons-el.jar" />
     </path>
@@ -35,7 +34,7 @@
             debug="true" deprecation="on" source="1.5" target="1.5" 
             destdir="./build/obj" 
             includeAntRuntime="false"
-            classpath="${i2plib}/i2p.jar:${i2plib}/i2ptunnel.jar:${i2plib}/i2psnark.jar:${i2plib}/mstreaming.jar:${i2plib}/systray.jar:${i2plib}/org.mortbay.jetty.jar" >
+            classpath="${i2plib}/i2p.jar:${i2plib}/i2ptunnel.jar:${i2plib}/i2psnark.jar:${i2plib}/mstreaming.jar:${i2plib}/systray.jar:${jettylib}/org.mortbay.jetty.jar:${jettylib}/jetty-util.jar" >
             <compilerarg line="${javac.compilerargs}" />
         </javac>
     </target>

@@ -33,8 +33,8 @@ import net.i2p.util.Log;
 import net.i2p.i2ptunnel.TunnelController;
 import net.i2p.apps.systray.UrlLauncher;
 
-import org.mortbay.http.HttpContext;
 import org.mortbay.jetty.Server;
+import org.mortbay.xml.XmlConfiguration;
 
 /**
  * This handles the starting and stopping of an eepsite tunnel and jetty
@@ -53,6 +53,11 @@ public class ZzzOTController {
     private static TunnelController _tunnel;
     private static ZzzOT _zzzot;
     private static Object _lock = new Object();
+
+    private static final String BACKUP = "jetty5.xml";
+    private static final String[] xmlFiles = {
+        "jetty.xml", "contexts/base-context.xml", "contexts/cgi-context.xml",
+        "etc/realm.properties", "etc/webdefault.xml" };
 
     public static void main(String args[]) {
         if (args.length != 3 || (!"-d".equals(args[0])))
@@ -135,10 +140,11 @@ public class ZzzOTController {
         tmpdir.mkdir();
         File jettyXml = new File(pluginDir, "jetty.xml");
         try {
-            Server serv = new Server(jettyXml.getAbsolutePath());
-            HttpContext[] hcs = serv.getContexts();
-            for (int i = 0; i < hcs.length; i++)
-                 hcs[i].setTempDirectory(tmpdir);
+            XmlConfiguration xmlc = new XmlConfiguration(jettyXml.toURI().toURL());
+            Server serv = (Server) xmlc.configure();
+            //HttpContext[] hcs = serv.getContexts();
+            //for (int i = 0; i < hcs.length; i++)
+            //     hcs[i].setTempDirectory(tmpdir);
             serv.start();
             _server = serv;
         } catch (Throwable t) {
@@ -180,22 +186,54 @@ public class ZzzOTController {
         _server = null;
     }
 
-    /** put the directory in the jetty.xml file */
+    /**
+     *  Migate the jetty configuration files.
+     *  Save old jetty.xml if moving from jetty 5 to jetty 6
+     */
     private static void migrateJettyXML(File pluginDir) {
-        File outFile = new File(pluginDir, "jetty.xml");
-        if (outFile.exists())
+        // contexts dir does not exist in Jetty 5
+        File file = new File(pluginDir, "contexts");
+        if (file.exists())
             return;
-        File fileTmpl = new File(pluginDir, "templates/jetty.xml");
+        file.mkdir();
+        file = new File(pluginDir, "etc");
+        file.mkdir();
+        file = new File(pluginDir, "jetty.xml");
+        if (file.exists()) {
+            File backup = new File(pluginDir, BACKUP);
+            if (backup.exists()) {
+                I2PAppContext ctx = I2PAppContext.getGlobalContext();
+                backup = new File(pluginDir, BACKUP + ctx.random().nextInt());
+            }
+            boolean ok = FileUtil.copy(file, backup, false, true);
+            if (!ok) {
+                _log.error("WARNING: Failed to back up " + file + " to " + backup);
+            }
+        }
+        for (int i = 0; i < xmlFiles.length; i++) {
+            migrateJettyFile(pluginDir, xmlFiles[i]);
+        }
+    }
+
+    /**
+     *  Migate a single jetty config file, replacing $PLUGIN as we copy it.
+     */
+    private static void migrateJettyFile(File pluginDir, String name) {
+        File templateDir = new File(pluginDir, "templates");
+        File fileTmpl = new File(templateDir, name);
+        File outFile = new File(pluginDir, name);
+        FileOutputStream os = null;
         try {
-            String props = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 250, true);
+            String props = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 600, true);
             if (props == null)
                 throw new IOException(fileTmpl.getAbsolutePath() + " open failed");
             props = props.replace("$PLUGIN", pluginDir.getAbsolutePath());
-            FileOutputStream os = new FileOutputStream(outFile);
+            os = new FileOutputStream(outFile);
             os.write(props.getBytes("UTF-8"));
-            os.close();
         } catch (IOException ioe) {
-            _log.error("jetty.xml migrate failed", ioe);
+            _log.error(outFile + " migrate failed", ioe);
+        } finally {
+            if (os != null) try { os.close(); } catch (IOException ioe) {}
         }
     }
 
