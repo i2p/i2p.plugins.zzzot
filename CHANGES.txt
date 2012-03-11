@@ -1,0 +1,40 @@
+0.8
+  2012-03-10
+  fix comment in jetty.xml
+
+0.7
+  2012-03-10
+  Port to Jetty 6
+  Replace QForwardHandler with RewriteHandler
+  Use ${ant.home}/lib/ant.jar instead of pulling ant.jar from Jetty
+  
+0.6
+  2011-12-31
+  Set max jetty version 5.99999
+  Add throttle options
+  Stub out announce-to-seedless
+  Seedless fixes, untested
+
+0.5
+  2010-07-11
+  Final compact response format
+
+0.4
+  2010-07-09
+  Compact request/response support - may not be final format
+  Fix NPE if no ip parameter
+
+0.3
+  2010-04-13
+  Verify dest
+  Add xfs check
+
+0.2
+  2010-03-23
+  Cache b64 dest strings
+  Help typo fix (thx duck)
+  Lots of seedless fixes
+  Build cleanups
+
+0.1
+  2010-03-23
