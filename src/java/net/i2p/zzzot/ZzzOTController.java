@@ -33,8 +33,8 @@ import net.i2p.util.Log;
 import net.i2p.i2ptunnel.TunnelController;
 import net.i2p.apps.systray.UrlLauncher;
 
-import org.mortbay.jetty.Server;
-import org.mortbay.xml.XmlConfiguration;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.xml.XmlConfiguration;
 
 /**
  * This handles the starting and stopping of an eepsite tunnel and jetty
@@ -54,7 +54,7 @@ public class ZzzOTController {
     private static ZzzOT _zzzot;
     private static Object _lock = new Object();
 
-    private static final String BACKUP = "jetty5.xml";
+    private static final String BACKUP_SUFFIX = ".jetty6";
     private static final String[] xmlFiles = {
         "jetty.xml", "contexts/base-context.xml", "contexts/cgi-context.xml",
         "etc/realm.properties", "etc/webdefault.xml" };
@@ -193,32 +193,63 @@ public class ZzzOTController {
     private static void migrateJettyXML(File pluginDir) {
         // contexts dir does not exist in Jetty 5
         File file = new File(pluginDir, "contexts");
-        if (file.exists())
-            return;
         file.mkdir();
         file = new File(pluginDir, "etc");
         file.mkdir();
         file = new File(pluginDir, "jetty.xml");
-        if (file.exists()) {
-            File backup = new File(pluginDir, BACKUP);
-            if (backup.exists()) {
-                I2PAppContext ctx = I2PAppContext.getGlobalContext();
-                backup = new File(pluginDir, BACKUP + ctx.random().nextInt());
-            }
-            boolean ok = FileUtil.copy(file, backup, false, true);
-            if (!ok) {
-                _log.error("WARNING: Failed to back up " + file + " to " + backup);
-            }
-        }
+        if (!shouldMigrate(file))
+            return;
         for (int i = 0; i < xmlFiles.length; i++) {
-            migrateJettyFile(pluginDir, xmlFiles[i]);
+            backupAndMigrateFile(pluginDir, xmlFiles[i]);
         }
+    }
+
+    /**
+     *  @return should we copy over all the files, based on the contents of this one
+     *  @since 0.10 (Jetty 7)
+     */
+    private static boolean shouldMigrate(File f) {
+        String xml = FileUtil.readTextFile(f.getAbsolutePath(), 100, true);
+        if (xml == null)
+            return true;
+        return xml.contains("class=\"org.mortbay.jetty.Server\"");
+    }
+
+    /**
+     *  Backup a file and migrate new XML
+     *  @return success
+     *  @since Jetty 7
+     */
+    private static boolean backupAndMigrateFile(File toDir, String filename) {
+        File to = new File(toDir, filename);
+        boolean rv = backupFile(to);
+        boolean rv2 = migrateJettyFile(toDir, filename);
+        return rv && rv2;
+    }
+
+    /**
+     *  Backup a file
+     *  @return success
+     *  @since Jetty 7
+     */
+    private static boolean backupFile(File from) {
+        if (!from.exists())
+            return true;
+        File to = new File(from.getAbsolutePath() + BACKUP_SUFFIX);
+        if (to.exists())
+            to = new File(to.getAbsolutePath() + "." + System.currentTimeMillis());
+        boolean rv = FileUtil.copy(from, to, false, true);
+        if (rv)
+            System.err.println("Backed up file " + from + " to " + to);
+        else
+            System.err.println("WARNING: Failed to back up file " + from + " to " + to);
+        return rv;
     }
 
     /**
      *  Migate a single jetty config file, replacing $PLUGIN as we copy it.
      */
-    private static void migrateJettyFile(File pluginDir, String name) {
+    private static boolean migrateJettyFile(File pluginDir, String name) {
         File templateDir = new File(pluginDir, "templates");
         File fileTmpl = new File(templateDir, name);
         File outFile = new File(pluginDir, name);
@@ -230,8 +261,10 @@ public class ZzzOTController {
             props = props.replace("$PLUGIN", pluginDir.getAbsolutePath());
             os = new FileOutputStream(outFile);
             os.write(props.getBytes("UTF-8"));
+            return true;
         } catch (IOException ioe) {
             _log.error(outFile + " migrate failed", ioe);
+            return false;
         } finally {
             if (os != null) try { os.close(); } catch (IOException ioe) {}
         }
