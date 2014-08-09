@@ -1,4 +1,4 @@
-<%@page import="java.util.ArrayList" %><%@page import="java.util.Collections" %><%@page import="java.util.List" %><%@page import="java.util.Map" %><%@page import="java.util.HashMap" %><%@page import="net.i2p.data.Base64" %><%@page import="net.i2p.data.Destination" %><%@page import="net.i2p.zzzot.*" %><%@page import="org.klomp.snark.bencode.BEncoder" %><%
+<%@page import="java.io.ByteArrayInputStream,java.util.ArrayList,java.util.Collections,java.util.List,java.util.Map,java.util.HashMap,net.i2p.data.Base64,net.i2p.data.Destination,net.i2p.zzzot.*,org.klomp.snark.bencode.BEncoder" %><%
 
 /*
  *  Above one-liner is so there is no whitespace -> IllegalStateException
@@ -94,7 +94,10 @@
 		try {
 			if (ip.endsWith(".i2p"))
 				ip = ip.substring(0, ip.length() - 4);
-			d = new Destination(ip);  // from b64 string
+			byte[] b = Base64.decode(ip);
+			if (b == null)
+				throw new Exception();
+			d = Destination.create(new ByteArrayInputStream(b));  // cache
 		} catch (Exception e) {
 			fail = true;
 			msg = "bad dest " + e;
