@@ -1,4 +1,4 @@
-<%@page import="net.i2p.crypto.SHA256Generator" %><%@page import="net.i2p.data.Base32" %><%@page import="net.i2p.data.Base64" %><%@page import="net.i2p.data.DataHelper" %><%@page import="net.i2p.zzzot.*" %><%
+<%@page import="net.i2p.crypto.SHA256Generator,net.i2p.data.Base32,net.i2p.data.Base64,net.i2p.data.DataHelper,net.i2p.zzzot.*" %><%
 
 /*
  *  Copyright 2010 zzz (zzz@mail.i2p)
