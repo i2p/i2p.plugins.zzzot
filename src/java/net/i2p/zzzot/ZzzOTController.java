@@ -96,12 +96,12 @@ public class ZzzOTController {
                 _log.error("Unable to create " + key.getAbsolutePath() + ' ' + e);
                 throw new IllegalArgumentException("Unable to create " + key.getAbsolutePath() + ' ' + e);
             }
-            _log.error("NOTICE: ZzzOT: New eepsite keys created in " + key.getAbsolutePath());
-            _log.error("NOTICE: ZzzOT: You should back up this file!");
+            _log.logAlways(Log.INFO, "NOTICE: ZzzOT: New eepsite keys created in " + key.getAbsolutePath());
+            _log.logAlways(Log.INFO, "NOTICE: ZzzOT: You should back up this file!");
             String b32 = Base32.encode(dest.calculateHash().getData()) + ".b32.i2p";
             String b64 = dest.toBase64();
-            _log.error("NOTICE: ZzzOT: Your base 32 address is " + b32);
-            _log.error("NOTICE: ZzzOT: Your base 64 address is " + b64);
+            _log.logAlways(Log.INFO, "NOTICE: ZzzOT: Your base 32 address is " + b32);
+            _log.logAlways(Log.INFO, "NOTICE: ZzzOT: Your base 64 address is " + b64);
         }
         startJetty(pluginDir, dest);
         startI2PTunnel(pluginDir, dest);
