@@ -11,7 +11,7 @@
         <delete file="plugin/i2ptunnel.config" />
         <!-- get version number -->
         <buildnumber file="scripts/build.number" />
-        <property name="release.number" value="0.10.0" />
+        <property name="release.number" value="0.11.0" />
 
         <!-- make the update xpi2p -->
         <!-- this contains everything except i2ptunnel.config -->
@@ -70,6 +70,9 @@
         <delete file="plugin/README.txt" />
         <delete file="zzzot.xpi2p" />
         <delete file="zzzot-update.xpi2p" />
+        <delete file="zzzot.su3" />
+        <delete file="zzzot-update.su3" />
+        <delete file="plugin.zip" />
     </target>
 
 </project>

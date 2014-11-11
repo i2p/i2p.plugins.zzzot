@@ -33,6 +33,10 @@
 
 	// so the chars will turn into bytes correctly
 	request.setCharacterEncoding("ISO-8859-1");
+        // above doesn't work for the query string
+        // https://wiki.eclipse.org/Jetty/Howto/International_Characters
+        // we could also do ((org.eclipse.jetty.server.Request) request).setQueryEncoding("ISO-8859-1")
+        request.setAttribute("org.eclipse.jetty.server.Request.queryEncoding", "ISO-8859-1");
 	java.io.OutputStream cout = response.getOutputStream();
 	response.setCharacterEncoding("ISO-8859-1");
 	response.setContentType("text/plain");
