@@ -27,6 +27,10 @@
  */
 	// so the chars will turn into bytes correctly
 	request.setCharacterEncoding("ISO-8859-1");
+        // above doesn't work for the query string
+        // https://wiki.eclipse.org/Jetty/Howto/International_Characters
+        // we could also do ((org.eclipse.jetty.server.Request) request).setQueryEncoding("ISO-8859-1")
+        request.setAttribute("org.eclipse.jetty.server.Request.queryEncoding", "ISO-8859-1");
 	java.io.OutputStream cout = response.getOutputStream();
 	response.setCharacterEncoding("ISO-8859-1");
 	response.setContentType("text/plain");
@@ -46,20 +50,24 @@
 
 	boolean all = info_hash == null;
 
+        Torrents torrents = ZzzOTController.getTorrents();
+	if (torrents == null && !fail) {
+		fail = true;
+		msg = "tracker is down";
+	}
+
 	InfoHash ih = null;
 	if ((!all) && !fail) {
 		try {
-			ih = new InfoHash(info_hash);
+			ih = torrents.createInfoHash(info_hash);
 		} catch (Exception e) {
 			fail = true;
 			msg = "bad infohash " + e;
 		}
 	}
 
-        Torrents torrents = ZzzOTController.getTorrents();
-
 	// build 3-level dictionary
-	Map<String, Object> m = new HashMap();
+	Map<String, Object> m = new HashMap(4);
 	if (fail) {
 		m.put("failure reason", msg);		
 	} else {

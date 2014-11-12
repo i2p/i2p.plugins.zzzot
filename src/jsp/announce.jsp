@@ -73,6 +73,11 @@
 		msg = "no info hash";
 	}
 
+	if (info_hash.length() != 20 && !fail) {
+		fail = true;
+		msg = "bad info hash length " + info_hash.length();
+	}
+
 	if (ip == null && !fail) {
 		fail = true;
 		msg = "no ip (dest)";
@@ -83,11 +88,22 @@
 		msg = "no peer id";
 	}
 
+	if (peer_id.length() != 20 && !fail) {
+		fail = true;
+		msg = "bad peer id length " + peer_id.length();
+	}
+
+ 	Torrents torrents = ZzzOTController.getTorrents();
+	if (torrents == null && !fail) {
+		fail = true;
+		msg = "tracker is down";
+	}
+
 	InfoHash ih = null;
 	if (!fail) {
 		try {
-			ih = new InfoHash(info_hash);
-		} catch (Exception e) {
+			ih = torrents.createInfoHash(info_hash);
+		} catch (IllegalArgumentException e) {
 			fail = true;
 			msg = "bad infohash " + e;
 		}
@@ -111,8 +127,8 @@
 	PID pid = null;
 	if (!fail) {
 		try {
-			pid = new PID(peer_id);
-		} catch (Exception e) {
+			pid = torrents.createPID(peer_id);
+		} catch (IllegalArgumentException e) {
 			fail = true;
 			msg = "bad peer id " + e;
 		}
@@ -162,8 +178,7 @@
 		} catch (NumberFormatException nfe) {};
 	}
 
- 	Torrents torrents = ZzzOTController.getTorrents();
-	Map<String, Object> m = new HashMap();
+	Map<String, Object> m = new HashMap(8);
 	if (fail) {
 		m.put("failure reason", msg);		
 	} else if ("stopped".equals(event)) {

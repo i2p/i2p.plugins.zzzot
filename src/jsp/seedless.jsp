@@ -62,6 +62,10 @@
 	} else if (req.startsWith("locate dG9ycmVud")) {  // locate b64(torrent)
 		// all the peers
 		Torrents torrents = ZzzOTController.getTorrents();
+		if (torrents == null) {
+			response.setStatus(503, "Down");
+			return;
+		}
 		for (InfoHash ihash : torrents.keySet()) {
 			Peers peers = torrents.get(ihash);
 			if (peers == null)

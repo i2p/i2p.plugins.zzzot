@@ -16,22 +16,20 @@ package net.i2p.zzzot;
  *
  */
 
-import java.io.UnsupportedEncodingException;
-
-import net.i2p.data.ByteArray;
+import net.i2p.data.SimpleDataStructure;
 
 /**
  *  A 20-byte peer ID
  */
-public class PID extends ByteArray {
+public class PID extends SimpleDataStructure {
 
-    public PID(String data) throws UnsupportedEncodingException {
-        this(data.getBytes("ISO-8859-1"));
-    }
+    public static final int LENGTH = 20;
 
     public PID(byte[] data) {
         super(data);
-        if (data.length != 20)
-            throw new IllegalArgumentException("Bad peer ID length: " + data.length);
+    }
+
+    public int length() {
+        return LENGTH;
     }
 }

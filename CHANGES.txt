@@ -1,3 +1,11 @@
+0.12.0
+  2014-xx-xx
+  Fix parameter decoding for scrape also
+  Add caching for info hashes and peer ids
+  Stop cleaner when plugin stops
+  Move to the ClientApp interface, remove all static refs
+  Attempt to fix crash after update
+
 0.11.0
   2014-11-11
   Critical fix for announce parameter decoding, triggered by recent Jetty versions

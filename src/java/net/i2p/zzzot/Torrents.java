@@ -18,13 +18,26 @@ package net.i2p.zzzot;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.i2p.CoreVersion;
+import net.i2p.data.DataHelper;
+import net.i2p.data.SDSCache;
+import net.i2p.util.VersionComparator;
+
+
 /**
  *  All the torrents
  */
 public class Torrents extends ConcurrentHashMap<InfoHash, Peers> {
 
+    private static final int CACHE_SIZE = 2048;
+    private final SDSCache<InfoHash> _hashCache;
+    private final SDSCache<PID> _pidCache;
+
+
     public Torrents() {
         super();
+        _hashCache = new SDSCache<InfoHash>(InfoHash.class, InfoHash.LENGTH, CACHE_SIZE);
+        _pidCache = new SDSCache<PID>(PID.class, PID.LENGTH, CACHE_SIZE);
     }
 
     public int countPeers() {
@@ -33,5 +46,53 @@ public class Torrents extends ConcurrentHashMap<InfoHash, Peers> {
              rv += p.size();
         }
         return rv;
+    }
+
+    /**
+     * Pull from cache or return new
+     *
+     * @throws IllegalArgumentException if data is not the correct number of bytes
+     * @since 0.12.0
+     */
+    public InfoHash createInfoHash(String data) throws IllegalArgumentException {
+        byte[] d = DataHelper.getASCII(data);
+        if (d.length != InfoHash.LENGTH)
+            throw new IllegalArgumentException("bad infohash length " + d.length);
+        return _hashCache.get(d);
+    }
+
+    /**
+     * Pull from cache or return new
+     *
+     * @throws IllegalArgumentException if data is not the correct number of bytes
+     * @since 0.12.0
+     */
+    public PID createPID(String data) throws IllegalArgumentException {
+        byte[] d = DataHelper.getASCII(data);
+        if (d.length != PID.LENGTH)
+            throw new IllegalArgumentException("bad peer id length " + d.length);
+        return _pidCache.get(d);
+    }
+
+    /**
+     *  @since 0.12.0
+     */
+    @Override
+    public void clear() {
+        super.clear();
+        clearCaches();
+    }
+
+    /**
+     *  @since 0.12.0
+     */
+    private void clearCaches() {
+        // not available until 0.9.17
+        if (VersionComparator.comp(CoreVersion.VERSION, "0.9.17") >= 0) {
+            try {
+                _hashCache.clear();
+                _pidCache.clear();
+            } catch (Throwable t) {}
+        }
     }
 }

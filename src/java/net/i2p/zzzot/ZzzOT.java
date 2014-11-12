@@ -18,33 +18,44 @@ package net.i2p.zzzot;
 
 import java.util.Iterator;
 
-import net.i2p.util.SimpleScheduler;
-import net.i2p.util.SimpleTimer;
+import net.i2p.I2PAppContext;
+import net.i2p.util.SimpleTimer2;
 
 /**
  *  Instantiate this to fire it up
  */
 class ZzzOT {
 
-    private Torrents _torrents;
+    private final Torrents _torrents;
+    private final Cleaner _cleaner;
+
     private static final long CLEAN_TIME = 4*60*1000;
     private static final long EXPIRE_TIME = 60*60*1000;
 
-    ZzzOT() {
+    ZzzOT(I2PAppContext ctx) {
         _torrents = new Torrents();
-        SimpleScheduler.getInstance().addPeriodicEvent(new Cleaner(), CLEAN_TIME);
+        _cleaner  = new Cleaner(ctx);
     }
 
     Torrents getTorrents() {
         return _torrents;
     }
 
-    void stop() {
-        _torrents.clear();
-        // no way to stop the cleaner
+    void start() {
+        _cleaner.forceReschedule(CLEAN_TIME);
     }
 
-    private class Cleaner implements SimpleTimer.TimedEvent {
+    void stop() {
+        _cleaner.cancel();
+        _torrents.clear();
+    }
+
+    private class Cleaner extends SimpleTimer2.TimedEvent {
+
+        /** must schedule later */
+        public Cleaner(I2PAppContext ctx) {
+            super(ctx.simpleTimer2());
+        }
 
         public void timeReached() {
             long now = System.currentTimeMillis();
@@ -61,6 +72,7 @@ class ZzzOT {
                 if (recent <= 0)
                     iter.remove();
             }
+            schedule(CLEAN_TIME);
         }
     }
 }

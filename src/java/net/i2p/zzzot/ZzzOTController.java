@@ -22,18 +22,25 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import net.i2p.CoreVersion;
 import net.i2p.I2PAppContext;
+import net.i2p.app.ClientApp;
+import net.i2p.app.ClientAppManager;
+import net.i2p.app.ClientAppState;
+import static net.i2p.app.ClientAppState.*;
+import net.i2p.apps.systray.UrlLauncher;
 import net.i2p.data.Base32;
 import net.i2p.data.DataHelper;
 import net.i2p.data.Destination;
 import net.i2p.data.PrivateKeyFile;
+import net.i2p.i2ptunnel.TunnelController;
 import net.i2p.util.FileUtil;
 import net.i2p.util.I2PAppThread;
 import net.i2p.util.Log;
-import net.i2p.i2ptunnel.TunnelController;
-import net.i2p.apps.systray.UrlLauncher;
+import net.i2p.util.VersionComparator;
 
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.xml.XmlConfiguration;
 
 /**
@@ -47,39 +54,64 @@ import org.eclipse.jetty.xml.XmlConfiguration;
  *
  * @author zzz
  */
-public class ZzzOTController {
-    private static final Log _log = I2PAppContext.getGlobalContext().logManager().getLog(ZzzOTController.class);
-    private static Server _server;
-    private static TunnelController _tunnel;
-    private static ZzzOT _zzzot;
-    private static Object _lock = new Object();
+public class ZzzOTController implements ClientApp {
+    private final I2PAppContext _context;
+    private final Log _log;
+    private final String[] _args;
+    private final ClientAppManager _mgr;
+    private Server _server;
+    private TunnelController _tunnel;
+    private final ZzzOT _zzzot;
+    /** only for main() */
+    private static volatile ZzzOTController _controller;
 
+    private ClientAppState _state = UNINITIALIZED;
+
+    private static final String NAME = "ZzzOT";
     private static final String BACKUP_SUFFIX = ".jetty6";
     private static final String[] xmlFiles = {
         "jetty.xml", "contexts/base-context.xml", "contexts/cgi-context.xml",
         "etc/realm.properties", "etc/webdefault.xml" };
 
-    public static void main(String args[]) {
-        if (args.length != 3 || (!"-d".equals(args[0])))
-            throw new IllegalArgumentException("Usage: PluginController -d $PLUGIN [start|stop]");
-        if ("start".equals(args[2]))
-            start(args);
-        else if ("stop".equals(args[2]))
-            stop();
-        else
-            throw new IllegalArgumentException("Usage: PluginController -d $PLUGIN [start|stop]");
+    /**
+     *  @since 0.12.0
+     */
+    public ZzzOTController(I2PAppContext ctx, ClientAppManager mgr, String args[]) {
+        _context = ctx;
+        _log = ctx.logManager().getLog(ZzzOTController.class);
+        _mgr = mgr;
+        _args = args;
+        _zzzot = new ZzzOT(ctx);
+        _state = INITIALIZED;
     }
 
+    /**
+     *  No longer supported, as we now need the ClientAppManager for the webapp to find us
+     */
+    public synchronized static void main(String args[]) {
+        throw new UnsupportedOperationException("Must use ClientApp interface");
+    }
+
+    /**
+     *  @return null if not running
+     */
     public static Torrents getTorrents() {
-        synchronized(_lock) {
-            if (_zzzot == null)
-                _zzzot = new ZzzOT();
-        }
-        return _zzzot.getTorrents();
+        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
+        if (mgr == null)
+            return null;
+        ClientApp z = mgr.getRegisteredApp(NAME);
+        if (z == null)
+            return null;
+        ZzzOTController ctrlr = (ZzzOTController) z;
+        return ctrlr._zzzot.getTorrents();
     }
 
-    private static void start(String args[]) {
-        File pluginDir = new File(args[1]);
+    /**
+     *  @param args ignored
+     */
+    private void start(String args[]) {
+        //File pluginDir = new File(args[1]);
+        File pluginDir = new File(_context.getAppDir(), "plugins/zzzot");
         if (!pluginDir.exists())
             throw new IllegalArgumentException("Plugin directory " + pluginDir.getAbsolutePath() + " does not exist");
 
@@ -105,11 +137,12 @@ public class ZzzOTController {
         }
         startJetty(pluginDir, dest);
         startI2PTunnel(pluginDir, dest);
+        _zzzot.start();
         // SeedlessAnnouncer.announce(_tunnel);
     }
 
 
-    private static void startI2PTunnel(File pluginDir, Destination dest) {
+    private void startI2PTunnel(File pluginDir, Destination dest) {
         File i2ptunnelConfig = new File(pluginDir, "i2ptunnel.config");
         Properties i2ptunnelProps = new Properties();
         try {
@@ -131,15 +164,15 @@ public class ZzzOTController {
         _tunnel = tun;
     }
 
-    private static void startJetty(File pluginDir, Destination dest) {
+    private void startJetty(File pluginDir, Destination dest) {
         if (_server != null)
             throw new IllegalArgumentException("Jetty already running!");
         migrateJettyXML(pluginDir);
-        I2PAppContext context = I2PAppContext.getGlobalContext();
-        File tmpdir = new File(context.getTempDir().getAbsolutePath(), "/zzzot-work");
+        File tmpdir = new File(_context.getTempDir().getAbsolutePath(), "/zzzot-work");
         tmpdir.mkdir();
         File jettyXml = new File(pluginDir, "jetty.xml");
         try {
+            Resource.setDefaultUseCaches(false);
             XmlConfiguration xmlc = new XmlConfiguration(jettyXml.toURI().toURL());
             Server serv = (Server) xmlc.configure();
             //HttpContext[] hcs = serv.getContexts();
@@ -155,14 +188,13 @@ public class ZzzOTController {
             launchHelp(pluginDir, dest);
     }
 
-    private static void stop() {
+    private void stop() {
         stopI2PTunnel();
         stopJetty();
-        if (_zzzot != null)
-            _zzzot.stop();
+        _zzzot.stop();
     }
 
-    private static void stopI2PTunnel() {
+    private void stopI2PTunnel() {
         if (_tunnel == null)
             return;
         try {
@@ -174,7 +206,7 @@ public class ZzzOTController {
         _tunnel = null;
     }
 
-    private static void stopJetty() {
+    private void stopJetty() {
         if (_server == null)
             return;
         try {
@@ -190,7 +222,7 @@ public class ZzzOTController {
      *  Migate the jetty configuration files.
      *  Save old jetty.xml if moving from jetty 5 to jetty 6
      */
-    private static void migrateJettyXML(File pluginDir) {
+    private void migrateJettyXML(File pluginDir) {
         // contexts dir does not exist in Jetty 5
         File file = new File(pluginDir, "contexts");
         file.mkdir();
@@ -220,7 +252,7 @@ public class ZzzOTController {
      *  @return success
      *  @since Jetty 7
      */
-    private static boolean backupAndMigrateFile(File toDir, String filename) {
+    private boolean backupAndMigrateFile(File toDir, String filename) {
         File to = new File(toDir, filename);
         boolean rv = backupFile(to);
         boolean rv2 = migrateJettyFile(toDir, filename);
@@ -249,7 +281,7 @@ public class ZzzOTController {
     /**
      *  Migate a single jetty config file, replacing $PLUGIN as we copy it.
      */
-    private static boolean migrateJettyFile(File pluginDir, String name) {
+    private boolean migrateJettyFile(File pluginDir, String name) {
         File templateDir = new File(pluginDir, "templates");
         File fileTmpl = new File(templateDir, name);
         File outFile = new File(pluginDir, name);
@@ -271,7 +303,7 @@ public class ZzzOTController {
     }
 
     /** put the directory, base32, and base64 info in the help.html file and launch a browser window to display it */
-    private static void launchHelp(File pluginDir, Destination dest) {
+    private void launchHelp(File pluginDir, Destination dest) {
         File fileTmpl = new File(pluginDir, "templates/help.html");
         File outFile = new File(pluginDir, "eepsite/docroot/help.html");
         String b32 = Base32.encode(dest.calculateHash().getData()) + ".b32.i2p";
@@ -297,5 +329,83 @@ public class ZzzOTController {
         public void run() {
             UrlLauncher.main(new String[] { "http://127.0.0.1:7662/help.html" } );
         }
+    }
+
+    /////// ClientApp methods
+
+    /** @since 0.12.0 */
+    public synchronized void startup() {
+        if (_mgr != null) {
+            // this is really ugly, but thru 0.9.16,
+            // stopping a ClientApp plugin with $PLUGIN in the args fails,
+            // and it tries to start a second one instead.
+            // Find the first one and stop it.
+            ClientApp z = _mgr.getRegisteredApp(NAME);
+            if (z != null) {
+                if (VersionComparator.comp(CoreVersion.VERSION, "0.9.17") < 0) {
+                    ZzzOTController ctrlr = (ZzzOTController) z;
+                    ctrlr.shutdown(null);
+                } else {
+                    _log.error("ZzzOT already running");
+                }
+                changeState(START_FAILED);
+                return;
+            }
+        }
+        if (_state != STOPPED && _state != INITIALIZED && _state != START_FAILED) {
+            _log.error("Start while state = " + _state);
+            return;
+        }
+        changeState(STARTING);
+        try {
+            start(_args);
+            changeState(RUNNING);
+            if (_mgr != null)
+                _mgr.register(this);
+        } catch (Exception e) {
+            changeState(START_FAILED, "Start failed", e);
+        }
+    }
+
+    /** @since 0.12.0 */
+    public synchronized void shutdown(String[] args) {
+        if (_state == STOPPED)
+            return;
+        changeState(STOPPING);
+        if (_mgr != null)
+            _mgr.unregister(this);
+        stop();
+        changeState(STOPPED);
+    }
+
+    /** @since 0.12.0 */
+    public ClientAppState getState() {
+        return _state;
+    }
+
+    /** @since 0.12.0 */
+    public String getName() {
+        return NAME;
+    }
+
+    /** @since 0.12.0 */
+    public String getDisplayName() {
+        return NAME;
+    }
+
+    /////// end ClientApp methods
+
+    /** @since 0.12.0 */
+    private synchronized void changeState(ClientAppState state) {
+        _state = state;
+        if (_mgr != null)
+            _mgr.notify(this, state, null, null);
+    }
+
+    /** @since 0.12.0 */
+    private synchronized void changeState(ClientAppState state, String msg, Exception e) {
+        _state = state;
+        if (_mgr != null)
+            _mgr.notify(this, state, msg, e);
     }
 }

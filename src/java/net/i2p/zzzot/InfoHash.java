@@ -16,22 +16,20 @@ package net.i2p.zzzot;
  *
  */
 
-import java.io.UnsupportedEncodingException;
-
-import net.i2p.data.ByteArray;
+import net.i2p.data.SimpleDataStructure;
 
 /**
  *  A 20-byte SHA1 info hash
  */
-public class InfoHash extends ByteArray {
+public class InfoHash extends SimpleDataStructure {
 
-    public InfoHash(String data) throws UnsupportedEncodingException {
-        this(data.getBytes("ISO-8859-1"));
-    }
+    public static final int LENGTH = 20;
 
     public InfoHash(byte[] data) {
         super(data);
-        if (data.length != 20)
-            throw new IllegalArgumentException("Bad infohash length: " + data.length);
+    }
+
+    public int length() {
+        return LENGTH;
     }
 }
