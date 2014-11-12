@@ -32,12 +32,16 @@ public class Torrents extends ConcurrentHashMap<InfoHash, Peers> {
     private static final int CACHE_SIZE = 2048;
     private final SDSCache<InfoHash> _hashCache;
     private final SDSCache<PID> _pidCache;
+    private final Integer _interval;
 
-
-    public Torrents() {
+    /**
+     *  @param interval in seconds
+     */
+    public Torrents(int interval) {
         super();
         _hashCache = new SDSCache<InfoHash>(InfoHash.class, InfoHash.LENGTH, CACHE_SIZE);
         _pidCache = new SDSCache<PID>(PID.class, PID.LENGTH, CACHE_SIZE);
+        _interval = Integer.valueOf(interval);
     }
 
     public int countPeers() {
@@ -46,6 +50,14 @@ public class Torrents extends ConcurrentHashMap<InfoHash, Peers> {
              rv += p.size();
         }
         return rv;
+    }
+
+    /**
+     *  @return in seconds
+     *  @since 0.12.0
+     */
+    public Integer getInterval() {
+        return _interval;
     }
 
     /**

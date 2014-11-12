@@ -27,7 +27,6 @@
  */
 	// would be nice to make these configurable
 	final int MAX_RESPONSES = 25;
-	final int INTERVAL = 27*60;
 	final boolean ALLOW_IP_MISMATCH = false;
 	final boolean ALLOW_COMPACT_RESPONSE = true;
 
@@ -185,7 +184,7 @@
 		Peers peers = torrents.get(ih);
 		if (matchIP && peers != null)
 			peers.remove(pid);
-		m.put("interval", Integer.valueOf(INTERVAL));
+		m.put("interval", torrents.getInterval());
 	} else {
 		Peers peers = torrents.get(ih);
 		if (peers == null) {
@@ -210,7 +209,7 @@
 		if (matchIP)
 			p.setLeft(left);
 
-		m.put("interval", Integer.valueOf(INTERVAL));
+		m.put("interval", torrents.getInterval());
 		int size = peers.size();
 		int seeds = peers.countSeeds();
 		m.put("complete", Integer.valueOf(seeds));

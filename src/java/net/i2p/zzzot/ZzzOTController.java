@@ -68,6 +68,7 @@ public class ZzzOTController implements ClientApp {
     private ClientAppState _state = UNINITIALIZED;
 
     private static final String NAME = "ZzzOT";
+    private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty6";
     private static final String[] xmlFiles = {
         "jetty.xml", "contexts/base-context.xml", "contexts/cgi-context.xml",
@@ -81,7 +82,16 @@ public class ZzzOTController implements ClientApp {
         _log = ctx.logManager().getLog(ZzzOTController.class);
         _mgr = mgr;
         _args = args;
-        _zzzot = new ZzzOT(ctx);
+        File cfile = new File(_context.getAppDir(), "plugins/zzzot/" + CONFIG_FILE);
+        Properties props = new Properties();
+        if (cfile.exists()) {
+            try {
+                DataHelper.loadProps(props, cfile);
+            } catch (IOException ioe) {
+                _log.error("Failed loading zzzot config from " + cfile, ioe);
+            }
+        }
+        _zzzot = new ZzzOT(ctx, props);
         _state = INITIALIZED;
     }
 

@@ -5,6 +5,7 @@
   Stop cleaner when plugin stops
   Move to the ClientApp interface, remove all static refs
   Attempt to fix crash after update
+  Add zzzot.config file to set interval
 
 0.11.0
   2014-11-11

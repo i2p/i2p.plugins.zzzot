@@ -17,6 +17,7 @@ package net.i2p.zzzot;
  */
 
 import java.util.Iterator;
+import java.util.Properties;
 
 import net.i2p.I2PAppContext;
 import net.i2p.util.SimpleTimer2;
@@ -28,12 +29,28 @@ class ZzzOT {
 
     private final Torrents _torrents;
     private final Cleaner _cleaner;
+    private final long EXPIRE_TIME;
 
+    private static final String PROP_INTERVAL = "interval";
     private static final long CLEAN_TIME = 4*60*1000;
-    private static final long EXPIRE_TIME = 60*60*1000;
+    private static final int DEFAULT_INTERVAL = 27*60;
+    private static final int MIN_INTERVAL = 15*60;
+    private static final int MAX_INTERVAL = 6*60*60;
 
-    ZzzOT(I2PAppContext ctx) {
-        _torrents = new Torrents();
+    ZzzOT(I2PAppContext ctx, Properties p) {
+        String intv = p.getProperty(PROP_INTERVAL);
+        int interval = DEFAULT_INTERVAL;
+        if (intv != null) {
+            try {
+                interval = Integer.parseInt(intv);
+                if (interval < MIN_INTERVAL)
+                    interval = MIN_INTERVAL;
+                else if (interval > MAX_INTERVAL)
+                    interval = MAX_INTERVAL;
+            } catch (NumberFormatException nfe) {}
+        }
+        _torrents = new Torrents(interval);
+        EXPIRE_TIME = 1000 * (interval + interval / 2);
         _cleaner  = new Cleaner(ctx);
     }
 
