@@ -6,6 +6,8 @@
   Move to the ClientApp interface, remove all static refs
   Attempt to fix crash after update
   Add zzzot.config file to set interval
+  Don't overwrite index.html and robots.txt in the update
+  Release all resources when shut down (requires 0.9.16-6 or higher)
 
 0.11.0
   2014-11-11

@@ -90,6 +90,9 @@ public class ZzzOTController implements ClientApp {
             } catch (IOException ioe) {
                 _log.error("Failed loading zzzot config from " + cfile, ioe);
             }
+        } else {
+            if (_log.shouldLog(Log.WARN))
+                _log.warn("No config file " + cfile);
         }
         _zzzot = new ZzzOT(ctx, props);
         _state = INITIALIZED;
@@ -208,7 +211,19 @@ public class ZzzOTController implements ClientApp {
         if (_tunnel == null)
             return;
         try {
-            _tunnel.stopTunnel();
+            // destroyTunnel() not available until 0.9.17, but we put 0.9.16 here for now
+            // so we get testing in 0.9.16-6 or later dev builds.
+            // No access to RouterVersion here.
+            // TODO change to 0.9.17
+            if (VersionComparator.comp(CoreVersion.VERSION, "0.9.16") >= 0) {
+                try {
+                    _tunnel.destroyTunnel();
+                } catch (Throwable t) {
+                    _tunnel.stopTunnel();
+                }
+            } else {
+                _tunnel.stopTunnel();
+            }
         } catch (Throwable t) {
             _log.error("ZzzOT tunnel stop failed", t);
             throw new IllegalArgumentException("Tunnel stop failed " + t);
@@ -354,6 +369,7 @@ public class ZzzOTController implements ClientApp {
             if (z != null) {
                 if (VersionComparator.comp(CoreVersion.VERSION, "0.9.17") < 0) {
                     ZzzOTController ctrlr = (ZzzOTController) z;
+                    _log.warn("Got start when another zzzot running, stopping him instead");
                     ctrlr.shutdown(null);
                 } else {
                     _log.error("ZzzOT already running");
