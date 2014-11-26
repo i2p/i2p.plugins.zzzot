@@ -72,7 +72,7 @@
 		msg = "no info hash";
 	}
 
-	if (info_hash.length() != 20 && !fail) {
+	if (!fail && info_hash.length() != 20) {
 		fail = true;
 		msg = "bad info hash length " + info_hash.length();
 	}
@@ -87,7 +87,7 @@
 		msg = "no peer id";
 	}
 
-	if (peer_id.length() != 20 && !fail) {
+	if (!fail && peer_id.length() != 20) {
 		fail = true;
 		msg = "bad peer id length " + peer_id.length();
 	}
