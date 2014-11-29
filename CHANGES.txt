@@ -1,3 +1,8 @@
+0.13.0
+  2014-11-29
+  Fix NPE on missing announce parameters
+  Increase startup delay
+
 0.12.0
   2014-11-13
   Fix parameter decoding for scrape also
