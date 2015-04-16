@@ -1,4 +1,4 @@
-<%@page import="java.io.ByteArrayInputStream,java.util.ArrayList,java.util.Collections,java.util.List,java.util.Map,java.util.HashMap,net.i2p.data.Base64,net.i2p.data.Destination,net.i2p.zzzot.*,org.klomp.snark.bencode.BEncoder" %><%
+<%@page import="java.io.ByteArrayInputStream,java.util.ArrayList,java.util.Collections,java.util.List,java.util.Map,java.util.HashMap,java.util.concurrent.ConcurrentMap,net.i2p.data.Base64,net.i2p.data.Destination,net.i2p.zzzot.*,org.klomp.snark.bencode.BEncoder" %><%
 
 /*
  *  Above one-liner is so there is no whitespace -> IllegalStateException
@@ -197,7 +197,8 @@
 		// fixme same peer id, different dest
 		Peer p = peers.get(pid);
 		if (p == null) {
-			p = new Peer(pid.getData(), d);
+		  	ConcurrentMap<String, String> destCache = ZzzOTController.getDestCache();
+			p = new Peer(pid.getData(), d, destCache);
 			// don't add if spoofed
 			if (matchIP) {
 				Peer p2 = peers.putIfAbsent(pid, p);
@@ -221,8 +222,17 @@
 			List<Peer> peerlist = new ArrayList(peers.values());
 			peerlist.remove(p);   // them
 			if (want < size - 1) {
-				Collections.shuffle(peerlist);
-				peerlist = peerlist.subList(0, want);
+				if (size > 150) {
+					// If size is huge, use random iterator for efficiency
+					List<Peer> rv = new ArrayList<Peer>(size);
+					for (RandomIterator<Peer> iter = new RandomIterator(peerlist); iter.hasNext(); ) {
+						rv.add(iter.next());
+					}
+					peerlist = rv;
+				} else {
+					Collections.shuffle(peerlist);
+					peerlist = peerlist.subList(0, want);
+				}
 			}
 			if (compact) {
 				// old experimental way - list of hashes

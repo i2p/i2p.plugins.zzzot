@@ -18,14 +18,12 @@ package net.i2p.zzzot;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import net.i2p.crypto.SHA256Generator;
 import net.i2p.data.Base64;
 import net.i2p.data.Destination;
 import net.i2p.data.Hash;
-import net.i2p.util.SimpleScheduler;
-import net.i2p.util.SimpleTimer;
 
 /*
  *  A single peer for a single torrent.
@@ -38,15 +36,9 @@ public class Peer extends HashMap<String, Object> {
 
     private long lastSeen;
     private long bytesLeft;
-    private static final ConcurrentHashMap<String, String> destCache = new ConcurrentHashMap();
     private static final Integer PORT = Integer.valueOf(6881);
-    private static final long CLEAN_TIME = 3*60*60*1000;
 
-    static {
-        SimpleScheduler.getInstance().addPeriodicEvent(new Cleaner(), CLEAN_TIME);
-    }
-
-    public Peer(byte[] id, Destination address) {
+    public Peer(byte[] id, Destination address, ConcurrentMap<String, String> destCache) {
         super(3);
         if (id.length != 20)
             throw new IllegalArgumentException("Bad peer ID length: " + id.length);
@@ -82,11 +74,5 @@ public class Peer extends HashMap<String, Object> {
         try {
             return new String(h.getData(), "ISO-8859-1");
         } catch (UnsupportedEncodingException uee) { return null; }
-    }
-
-    private static class Cleaner implements SimpleTimer.TimedEvent {
-        public void timeReached() {
-            destCache.clear();
-        }
     }
 }

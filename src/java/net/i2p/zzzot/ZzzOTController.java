@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentMap;
 
 import net.i2p.CoreVersion;
 import net.i2p.I2PAppContext;
@@ -117,6 +118,22 @@ public class ZzzOTController implements ClientApp {
             return null;
         ZzzOTController ctrlr = (ZzzOTController) z;
         return ctrlr._zzzot.getTorrents();
+    }
+
+
+    /**
+     *  @return null if not running
+     *  @since 0.9.14
+     */
+    public static ConcurrentMap<String, String> getDestCache() {
+        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
+        if (mgr == null)
+            return null;
+        ClientApp z = mgr.getRegisteredApp(NAME);
+        if (z == null)
+            return null;
+        ZzzOTController ctrlr = (ZzzOTController) z;
+        return ctrlr._zzzot.getDestCache();
     }
 
     /**

@@ -18,6 +18,8 @@ package net.i2p.zzzot;
 
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.i2p.I2PAppContext;
 import net.i2p.util.SimpleTimer2;
@@ -29,10 +31,12 @@ class ZzzOT {
 
     private final Torrents _torrents;
     private final Cleaner _cleaner;
+    private final ConcurrentHashMap<String, String> _destCache = new ConcurrentHashMap<String, String>();
     private final long EXPIRE_TIME;
 
     private static final String PROP_INTERVAL = "interval";
     private static final long CLEAN_TIME = 4*60*1000;
+    private static final long DEST_CACHE_CLEAN_TIME = 3*60*60*1000;
     private static final int DEFAULT_INTERVAL = 27*60;
     private static final int MIN_INTERVAL = 15*60;
     private static final int MAX_INTERVAL = 6*60*60;
@@ -58,6 +62,11 @@ class ZzzOT {
         return _torrents;
     }
 
+    /** @since 0.9.14 */
+    ConcurrentHashMap<String, String> getDestCache() {
+        return _destCache;
+    }
+
     void start() {
         _cleaner.forceReschedule(CLEAN_TIME);
     }
@@ -65,9 +74,12 @@ class ZzzOT {
     void stop() {
         _cleaner.cancel();
         _torrents.clear();
+        _destCache.clear();
     }
 
     private class Cleaner extends SimpleTimer2.TimedEvent {
+
+        private final AtomicInteger _runCount = new AtomicInteger();
 
         /** must schedule later */
         public Cleaner(I2PAppContext ctx) {
@@ -88,6 +100,9 @@ class ZzzOT {
                 }
                 if (recent <= 0)
                     iter.remove();
+            }
+            if (_runCount.incrementAndGet() % (DEST_CACHE_CLEAN_TIME / CLEAN_TIME) == 0) {
+                _destCache.clear();
             }
             schedule(CLEAN_TIME);
         }

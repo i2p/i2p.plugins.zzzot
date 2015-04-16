@@ -1,3 +1,9 @@
+0.14.0
+  2015-05-xx
+  Remove use of deprecated SimpleScheduler
+  Remove static structures
+  Use RandomIterator for efficiency
+
 0.13.0
   2014-11-29
   Fix NPE on missing announce parameters
