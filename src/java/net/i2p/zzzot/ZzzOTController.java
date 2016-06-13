@@ -228,11 +228,8 @@ public class ZzzOTController implements ClientApp {
         if (_tunnel == null)
             return;
         try {
-            // destroyTunnel() not available until 0.9.17, but we put 0.9.16 here for now
-            // so we get testing in 0.9.16-6 or later dev builds.
-            // No access to RouterVersion here.
-            // TODO change to 0.9.17
-            if (VersionComparator.comp(CoreVersion.VERSION, "0.9.16") >= 0) {
+            // destroyTunnel() not available until 0.9.17
+            if (VersionComparator.comp(CoreVersion.VERSION, "0.9.17") >= 0) {
                 try {
                     _tunnel.destroyTunnel();
                 } catch (Throwable t) {
