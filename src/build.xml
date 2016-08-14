@@ -67,13 +67,15 @@
         <javac
             debug="true"
             deprecation="on"
-            source="1.5" target="1.5" 
+            source="${javac.version}" target="${javac.version}" 
             destdir="build/war/WEB-INF/classes"
             srcdir="./build/jspjava"
             includes="**/*.java"
             includeAntRuntime="false"
             classpathref="jspcp"
-            failonerror="true" />
+            failonerror="true" >
+            <compilerarg line="${javac.compilerargs}" />
+        </javac>
 
         <copy file="jsp/WEB-INF/web.xml" tofile="build/web.xml" />
         <loadfile property="jspc.web.fragment" srcfile="build/web-fragment.xml" />
