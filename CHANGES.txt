@@ -1,6 +1,10 @@
+0.15.0
+  2015-08-xx
+  Increase default limits, set I2CP tag options
+
 0.14.0
   2015-05-28
-  Remove use of deprecated SimpleScheduler
+  Remove use of deprecated SimpleScheduler (ticket #1523)
   Remove static structures
   Use RandomIterator for efficiency
 

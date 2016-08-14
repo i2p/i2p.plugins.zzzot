@@ -25,13 +25,14 @@
     </target>
 
     <property name="javac.compilerargs" value="" />
+    <property name="javac.version" value="1.6" />
 
     <target name="compile">
         <mkdir dir="./build" />
         <mkdir dir="./build/obj" />
         <javac 
             srcdir="./java" 
-            debug="true" deprecation="on" source="1.5" target="1.5" 
+            debug="true" deprecation="on" source="${javac.version}" target="${javac.version}" 
             destdir="./build/obj" 
             includeAntRuntime="false"
             classpath="${i2plib}/i2p.jar:${i2plib}/i2ptunnel.jar:${i2plib}/i2psnark.jar:${i2plib}/mstreaming.jar:${i2plib}/systray.jar:${jettylib}/org.mortbay.jetty.jar:${jettylib}/jetty-util.jar:${jettylib}/jetty-xml.jar" >
