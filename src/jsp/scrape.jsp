@@ -45,7 +45,8 @@
 	if (xff != null || xfs != null) {
 		fail = true;
 		msg = "Non-I2P access denied";
-	        response.setStatus(403, msg);
+	        //response.setStatus(403, msg);
+	        response.setStatus(403);
 	}
 
 	boolean all = info_hash == null;
@@ -67,21 +68,21 @@
 	}
 
 	// build 3-level dictionary
-	Map<String, Object> m = new HashMap(4);
+	Map<String, Object> m = new HashMap<String, Object>(4);
 	if (fail) {
 		m.put("failure reason", msg);		
 	} else {
-		List<InfoHash> ihList = new ArrayList();
+		List<InfoHash> ihList = new ArrayList<InfoHash>();
 		if (all)
 			ihList.addAll(torrents.keySet());
 		else
 			ihList.add(ih);
-		Map<String, Map> files = new HashMap();
+		Map<String, Map> files = new HashMap<String, Map>();
 		for (InfoHash ihash : ihList) {
 			Peers peers = torrents.get(ihash);
 			if (peers == null)
 				continue;
-			Map<String, Object> dict = new HashMap();
+			Map<String, Object> dict = new HashMap<String, Object>();
 			int size = peers.size();
 			int seeds = peers.countSeeds();
 			dict.put("complete", Integer.valueOf(seeds));

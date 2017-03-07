@@ -40,7 +40,8 @@
 
 	if (xff != null || xfs != null) {
 		String msg = "Non-I2P access denied";
-	        response.setStatus(403, msg);
+	        //response.setStatus(403, msg);
+	        response.setStatus(403);
 		out.println(msg);
 	} else if (req == null) {
 		// probe
@@ -63,7 +64,8 @@
 		// all the peers
 		Torrents torrents = ZzzOTController.getTorrents();
 		if (torrents == null) {
-			response.setStatus(503, "Down");
+			//response.setStatus(503, "Down");
+			response.setStatus(503);
 			return;
 		}
 		for (InfoHash ihash : torrents.keySet()) {
@@ -92,7 +94,8 @@
 		}
 	} else {
 		// error code
-		response.setStatus(406, "Bad request");
+		//response.setStatus(406, "Bad request");
+		response.setStatus(406);
 		out.println("SC_NOT_ACCEPTABLE");
 	}
 

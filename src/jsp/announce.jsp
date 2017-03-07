@@ -64,7 +64,8 @@
 	if (xff != null || xfs != null) {
 		fail = true;
 		msg = "Non-I2P access denied";
-	        response.setStatus(403, msg);
+	        //response.setStatus(403, msg);
+	        response.setStatus(403);
 	}
 
 	if (info_hash == null && !fail) {
@@ -177,7 +178,7 @@
 		} catch (NumberFormatException nfe) {};
 	}
 
-	Map<String, Object> m = new HashMap(8);
+	Map<String, Object> m = new HashMap<String, Object>(8);
 	if (fail) {
 		m.put("failure reason", msg);		
 	} else if ("stopped".equals(event)) {
@@ -219,13 +220,13 @@
 			// snark < 0.7.13 always wants a list
 			m.put("peers", java.util.Collections.EMPTY_LIST);
 		} else {
-			List<Peer> peerlist = new ArrayList(peers.values());
+			List<Peer> peerlist = new ArrayList<Peer>(peers.values());
 			peerlist.remove(p);   // them
 			if (want < size - 1) {
 				if (size > 150) {
 					// If size is huge, use random iterator for efficiency
 					List<Peer> rv = new ArrayList<Peer>(size);
-					for (RandomIterator<Peer> iter = new RandomIterator(peerlist); iter.hasNext(); ) {
+					for (RandomIterator<Peer> iter = new RandomIterator<Peer>(peerlist); iter.hasNext(); ) {
 						rv.add(iter.next());
 					}
 					peerlist = rv;
