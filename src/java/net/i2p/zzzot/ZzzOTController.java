@@ -70,7 +70,7 @@ public class ZzzOTController implements ClientApp {
 
     private static final String NAME = "ZzzOT";
     private static final String CONFIG_FILE = "zzzot.config";
-    private static final String BACKUP_SUFFIX = ".jetty6";
+    private static final String BACKUP_SUFFIX = ".jetty8";
     private static final String[] xmlFiles = {
         "jetty.xml", "contexts/base-context.xml", "contexts/cgi-context.xml",
         "etc/realm.properties", "etc/webdefault.xml" };
@@ -280,10 +280,10 @@ public class ZzzOTController implements ClientApp {
      *  @since 0.10 (Jetty 7)
      */
     private static boolean shouldMigrate(File f) {
-        String xml = FileUtil.readTextFile(f.getAbsolutePath(), 100, true);
+        String xml = FileUtil.readTextFile(f.getAbsolutePath(), 400, true);
         if (xml == null)
             return true;
-        return xml.contains("class=\"org.mortbay.jetty.Server\"");
+        return xml.contains("class=\"org.eclipse.jetty.server.nio.SelectChannelConnector\"");
     }
 
     /**

@@ -1,6 +1,7 @@
 0.15.0
-  2015-08-xx
+  2017-03-11
   Increase default limits, set I2CP tag options
+  Update eepsite configuration for Jetty 9 (I2P 0.9.30)
 
 0.14.0
   2015-05-28
