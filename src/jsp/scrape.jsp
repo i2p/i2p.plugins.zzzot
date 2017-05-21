@@ -77,7 +77,8 @@
 			ihList.addAll(torrents.keySet());
 		else
 			ihList.add(ih);
-		Map<String, Map> files = new HashMap<String, Map>();
+		// requires I2P 0.9.30-8
+		Map<byte[], Map> files = new HashMap<byte[], Map>();
 		for (InfoHash ihash : ihList) {
 			Peers peers = torrents.get(ihash);
 			if (peers == null)
@@ -88,11 +89,16 @@
 			dict.put("complete", Integer.valueOf(seeds));
 			dict.put("incomplete", Integer.valueOf(size - seeds));
 			dict.put("downloaded", Integer.valueOf(0));
-			files.put(new String(ihash.getData(), "ISO-8859-1"), dict);
+			files.put(ihash.getData(), dict);
 		}
 		m.put("files", files);
 	}
-	BEncoder.bencode(m, cout);
+	try {
+		BEncoder.bencode(m, cout);
+	} catch (IllegalArgumentException iae) {
+		// before I2P 0.9.30-8
+		// just let it truncate, wasn't valid before anyway
+	}
 
 /*
  *  Remove the newline on the last line or

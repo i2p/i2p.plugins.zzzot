@@ -1,3 +1,7 @@
+0.16.0
+  2017-05-21
+  Fix scrape response (requires I2P 0.9.30-8) (ticket #1994)
+
 0.15.0
   2017-03-11
   Increase default limits, set I2CP tag options
