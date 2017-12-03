@@ -24,8 +24,7 @@ This link is also at the top of your router console when ZzzOT is running.
     <br><tt>java -jar $I2P/lib/i2p.jar privatekeyfile -a your-hostname.i2p $PLUGIN/eepPriv.dat</tt>
     <br>You will need this authentication string to register a hostname at <a href="http://stats.i2p/i2p/addkey.html">stats.i2p</a>.
 <p>Your private key file is $PLUGIN/eepPriv.dat - back it up!!!
-<p>Your eepsite document root is $PLUGIN/eepsite/docroot,
-   you may put other files there if you wish to have additional content on your eepsite.
+
 <p>The supported announce URLs are:
    <ul>
    <li><a href="http://$B32/a">http://$B32/a</a>
@@ -46,12 +45,28 @@ This link is also at the top of your router console when ZzzOT is running.
    <li><a href="http://$B32/tracker/scrape.jsp">http://$B32/tracker/scrape.jsp</a>
    <li><a href="http://$B32/tracker/scrape.php">http://$B32/tracker/scrape.php</a>
    </ul>
+
+<h3>Configuration and Customization</h3>
+
 <p>Your eepsite tunnel is configured for 2 inbound and 2 outbound tunnels, 3 hops each.
    You may change tunnel settings by editing $PLUGIN/i2ptunnel.config and restarting the plugin.
    The tunnel will not appear in <a href="http://127.0.0.1:7657/i2ptunnel/index.jsp">i2ptunnel</a>.
-   If your tracker gets over 1000 peers, you will probably want to increase the number of tunnels.
+   <i>If your tracker gets over 1000 peers, you will probably want to increase the number of tunnels.</i>
+
+<p>The only configuration for zzzot itself is the "interval", which tells the clients how long to
+   wait between announces. The default is 1620 seconds (27 minutes).
+   <i>The easiest way to reduce the load on your tracker is to increase the interval.</i>
+   To do so, edit the file $PLUGIN/zzzot.config, then stop and restart the plugin.
+
 <p>The Jetty webserver port is 7662. If you must change it, edit jetty.xml, i2ptunnel.config, and plugins.config
     in the directory $PLUGIN. Then stop and restart the plugin.
+
+<p>Your eepsite home page is $PLUGIN/eepsite/docroot/index.html,
+   you may edit it to add information about your tracker or links to additional content.
+
+<p>Your eepsite document root is $PLUGIN/eepsite/docroot/,
+   you may put other files there if you wish to have additional content on your eepsite.
+
 <p>As you probably know, an open tracker does not require torrents to be registered,
    and it does not host torrent files. You can, however, host torrent files elsewhere on
    the eepsite, for example at <a href="http://$B32/torrents/">/torrents</a>.
