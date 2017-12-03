@@ -20,7 +20,9 @@ This link is also at the top of your router console when ZzzOT is running.
 <p>Once you decide on a host name, you may
    <a href="http://127.0.0.1:7657/susidns/addressbook.jsp?book=private&destination=$B64">add the key to your local addressbook here</a>.
 <p>Your Base 64 key is: &nbsp;&nbsp;&nbsp;<textarea rows="1" style="height: 3em;" cols="40" readonly="readonly" wrap="off">$B64</textarea>
-    <br>You will need this key to register a hostname at <a href="http://stats.i2p/i2p/addkey.html">stats.i2p</a>.
+<p>To generate a registration authentication string for your host name, run the following command line:
+    <br><tt>java -jar $I2P/lib/i2p.jar privatekeyfile -a your-hostname.i2p $PLUGIN/eepPriv.dat</tt>
+    <br>You will need this authentication string to register a hostname at <a href="http://stats.i2p/i2p/addkey.html">stats.i2p</a>.
 <p>Your private key file is $PLUGIN/eepPriv.dat - back it up!!!
 <p>Your eepsite document root is $PLUGIN/eepsite/docroot,
    you may put other files there if you wish to have additional content on your eepsite.

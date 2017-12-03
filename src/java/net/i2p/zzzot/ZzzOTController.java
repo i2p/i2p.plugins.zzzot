@@ -354,6 +354,7 @@ public class ZzzOTController implements ClientApp {
             html = html.replace("$PLUGIN", pluginDir.getAbsolutePath());
             html = html.replace("$B32", b32);
             html = html.replace("$B64", b64);
+            html = html.replace("$I2P", _context.getBaseDir().getAbsolutePath());
             FileOutputStream os = new FileOutputStream(outFile);
             os.write(html.getBytes("UTF-8"));
             os.close();
