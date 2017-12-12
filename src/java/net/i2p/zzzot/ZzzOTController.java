@@ -351,10 +351,18 @@ public class ZzzOTController implements ClientApp {
             String html = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 100, true);
             if (html == null)
                 throw new IOException(fileTmpl.getAbsolutePath() + " open failed");
-            html = html.replace("$PLUGIN", pluginDir.getAbsolutePath());
+            // replace $HOME in path
+            String home = System.getProperty("user.home");
+            String pdir = pluginDir.getAbsolutePath();
+            if (pdir.startsWith(home))
+                pdir = "$HOME" + pdir.substring(home.length());
+            html = html.replace("$PLUGIN", pdir);
             html = html.replace("$B32", b32);
             html = html.replace("$B64", b64);
-            html = html.replace("$I2P", _context.getBaseDir().getAbsolutePath());
+            String bdir = _context.getBaseDir().getAbsolutePath();
+            if (bdir.startsWith(home))
+                bdir = "$HOME" + bdir.substring(home.length());
+            html = html.replace("$I2P", bdir);
             FileOutputStream os = new FileOutputStream(outFile);
             os.write(html.getBytes("UTF-8"));
             os.close();
