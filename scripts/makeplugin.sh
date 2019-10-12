@@ -15,7 +15,7 @@ PUBKEYSTORE=$PUBKEYDIR/plugin-su3-public-signing.crt
 PRIVKEYSTORE=$PUBKEYDIR/plugin-su3-keystore.ks
 KEYTYPE=RSA_SHA512_4096
 
-export I2P=../i2p/pkg-temp
+export I2P=../i2p.i2p/pkg-temp
 
 PLUGINDIR=${1:-plugin}
 
