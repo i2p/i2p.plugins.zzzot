@@ -16,7 +16,7 @@ to serve static html files and images.
     <Arg>max-age=3600,public</Arg>
   </Call>
   <Call name="addServlet">
-    <Arg>org.eclipse.jetty.servlet.DefaultServlet</Arg>
+    <Arg>net.i2p.servlet.I2PDefaultServlet</Arg>
     <Arg>/</Arg>
   </Call>
 </Configure>

@@ -1,5 +1,4 @@
 Configuration file:
-	- interval
 	- clean time
 	- max peers in response
 	- disable full scrapes
@@ -17,3 +16,11 @@ Bans:
 
 Verifier:
 	- Check dest vs. b32 in header
+
+Feature requests:
+
+- display infohashes and status for individual torrents i.e. number of active peers/seeds, total number of downloads: http://bittorrent.org/beps/bep_0048.html
+- optional mapping of hashes to torrent names
+- optional clustering of open trackers to permit syncing
+- blacklists for hashes/torrents
+- optional password protection for site and/or admin section

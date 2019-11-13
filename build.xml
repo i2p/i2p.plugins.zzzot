@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project basedir="." default="all" name="zzzot">
     <property file="override.properties"/>
-   
+
     <target name="all" depends="clean,plugin" />
 
     <target name="war" >
         <ant dir="src" target="build" />
     </target>
 
-    <target name="plugin" depends="war"> 
+    <target name="plugin" depends="war">
         <delete>
            <!-- in installer but not update -->
            <fileset dir="plugin/" includes="i2ptunnel.config zzzot.config eepsite/docroot/index.html eepsite/docroot/robots.txt" />
@@ -16,12 +16,14 @@
         <delete dir="plugin/eepsite/docroot/torrents/" />
         <!-- get version number -->
         <buildnumber file="scripts/build.number" />
-        <property name="release.number" value="0.16.0" />
+        <property name="release.number" value="0.16.1" />
 
         <!-- make the update xpi2p -->
         <!-- this contains everything except i2ptunnel.config -->
         <copy file="LICENSE.txt" todir="plugin/" overwrite="true" />
         <copy file="README.txt" todir="plugin/" overwrite="true" />
+        <copy file="CHANGES.txt" todir="plugin/" overwrite="true" />
+        <copy file="scripts/tracker.css" todir="plugin/eepsite/docroot/" overwrite="true" />
         <copy file="scripts/plugin.config" todir="plugin/" overwrite="true" />
         <exec executable="echo" osfamily="unix" failonerror="true" output="plugin/plugin.config" append="true">
             <arg value="update-only=true" />
@@ -57,7 +59,6 @@
         <!-- Files in installer but not update. Be sure to Add to delete fileset above and clean target below -->
         <copy file="scripts/i2ptunnel.config" todir="plugin/" overwrite="true" />
         <copy file="scripts/zzzot.config" todir="plugin/" overwrite="true" />
-        <copy file="scripts/index.html" todir="plugin/eepsite/docroot/" overwrite="true" />
         <copy file="scripts/robots.txt" todir="plugin/eepsite/docroot/" overwrite="true" />
         <mkdir dir="plugin/eepsite/docroot/torrents/" />
         <exec executable="echo" osfamily="unix" failonerror="true" output="plugin/plugin.config" append="true">
@@ -72,13 +73,19 @@
 
     <target name="clean" >
         <ant dir="src" target="clean" />
+        <defaultexcludes remove="**/*~"/>
+        <delete>
+            <fileset dir="." includes="*/*.~ **/*.*~ */**/*.*~ *.*~" />
+        </delete>
         <delete file="plugin/i2ptunnel.config" />
         <delete file="plugin/plugin.config" />
         <delete file="plugin/zzzot.config" />
         <delete file="plugin/eepsite/docroot/index.html" />
         <delete file="plugin/eepsite/docroot/robots.txt" />
+        <delete file="plugin/eepsite/docroot/tracker.css" />
         <delete file="plugin/lib/zzzot.jar.pack" />
         <delete file="plugin/eepsite/webapps/tracker.war.pack" />
+        <delete file="plugin/CHANGES.txt" />
         <delete file="plugin/LICENSE.txt" />
         <delete file="plugin/README.txt" />
         <delete file="zzzot.xpi2p" />

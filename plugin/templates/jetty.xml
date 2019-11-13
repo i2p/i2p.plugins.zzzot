@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?> 
+<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure.dtd">
 
 <!-- ========================================================================= -->
@@ -81,7 +81,7 @@
          SocketConnector below.
          Do not use for gij or JamVM - comment this out, and uncomment the
          SocketConnector below.
-    -->    
+    -->
     <Call name="addConnector">
       <Arg>
           <New class="org.eclipse.jetty.server.ServerConnector">
@@ -121,12 +121,12 @@
     -->
 
     <!-- =========================================================== -->
-    <!-- Set handler Collection Structure                            --> 
-    <!--                                                             --> 
-    <!-- We use a RewriteHandler at the top level so that we may     --> 
-    <!-- convert any top-level URLs for the tracker down into the    --> 
-    <!-- tracker servlet, without interfering with anything else     --> 
-    <!-- that is hosted on the same eepsite.                         --> 
+    <!-- Set handler Collection Structure                            -->
+    <!--                                                             -->
+    <!-- We use a RewriteHandler at the top level so that we may     -->
+    <!-- convert any top-level URLs for the tracker down into the    -->
+    <!-- tracker servlet, without interfering with anything else     -->
+    <!-- that is hosted on the same eepsite.                         -->
     <!-- =========================================================== -->
     <Set name="handler">
       <New id="Rewrite" class="org.eclipse.jetty.rewrite.handler.RewriteHandler">
@@ -135,6 +135,36 @@
         <Set name="originalPathAttribute">requestedPath</Set>
         <Set name="rules">
           <Array type="org.eclipse.jetty.rewrite.handler.Rule">
+            <Item>
+              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
+                <Set name="pattern">/help</Set>
+                <Set name="replacement">/help.html</Set>
+              </New>
+            </Item>
+            <Item>
+              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
+                <Set name="pattern">/help/</Set>
+                <Set name="replacement">/help.html</Set>
+              </New>
+            </Item>
+            <Item>
+              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
+                <Set name="pattern">/tracker</Set>
+                <Set name="replacement">/tracker/index.jsp</Set>
+              </New>
+            </Item>
+            <Item>
+              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
+                <Set name="pattern">/tracker/</Set>
+                <Set name="replacement">/tracker/index.jsp</Set>
+              </New>
+            </Item>
+            <Item>
+              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
+                <Set name="pattern">/tracker/index.html</Set>
+                <Set name="replacement">/tracker/index.jsp</Set>
+              </New>
+            </Item>
             <Item>
               <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
                 <Set name="pattern">/a</Set>

@@ -65,10 +65,15 @@ public class ZzzOTController implements ClientApp {
     private final ZzzOT _zzzot;
     /** only for main() */
     private static volatile ZzzOTController _controller;
+    // you wouldn't run two instances in the same JVM, would you?
+    private static String _sitename;
 
     private ClientAppState _state = UNINITIALIZED;
 
     private static final String NAME = "ZzzOT";
+    private static final String DEFAULT_SITENAME = "ZZZOT";
+    private static final String PROP_SITENAME = "sitename";
+    private static final String VERSION = "0.16.1";
     private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty8";
     private static final String[] xmlFiles = {
@@ -96,6 +101,7 @@ public class ZzzOTController implements ClientApp {
                 _log.warn("No config file " + cfile);
         }
         _zzzot = new ZzzOT(ctx, props);
+        _sitename = props.getProperty(PROP_SITENAME, DEFAULT_SITENAME);
         _state = INITIALIZED;
     }
 
@@ -318,7 +324,7 @@ public class ZzzOTController implements ClientApp {
     }
 
     /**
-     *  Migate a single jetty config file, replacing $PLUGIN as we copy it.
+     *  Migrate a single jetty config file, replacing $PLUGIN as we copy it.
      */
     private boolean migrateJettyFile(File pluginDir, String name) {
         File templateDir = new File(pluginDir, "templates");
@@ -345,20 +351,29 @@ public class ZzzOTController implements ClientApp {
     private void launchHelp(File pluginDir, Destination dest) {
         File fileTmpl = new File(pluginDir, "templates/help.html");
         File outFile = new File(pluginDir, "eepsite/docroot/help.html");
+        File index_in = new File(pluginDir, "templates/index.html");
+        File index_out = new File(pluginDir, "eepsite/docroot/index.html");
         String b32 = Base32.encode(dest.calculateHash().getData()) + ".b32.i2p";
         String b64 = dest.toBase64();
         try {
-            String html = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 100, true);
+            // help.html
+            String html = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 400, true);
             if (html == null)
                 throw new IOException(fileTmpl.getAbsolutePath() + " open failed");
             // replace $HOME in path
             String home = System.getProperty("user.home");
             String pdir = pluginDir.getAbsolutePath();
-            if (pdir.startsWith(home))
+            if (pdir.startsWith(home)) {
                 pdir = "$HOME" + pdir.substring(home.length());
+                // only warn about username in help if we haven't replaced it with $HOME
+                html = html.replace("<p class=\"warn\" id=\"docroot\">", "<p id=\"docroot\">");
+                html = html.replace("<br><span class=\"emphasis\"><b>You should probably move it outside of the document root " +
+                                    "before you announce your eepsite as it may contain your username.</b></span>", "");
+            }
             html = html.replace("$PLUGIN", pdir);
             html = html.replace("$B32", b32);
             html = html.replace("$B64", b64);
+            html = html.replace("$VERSION", VERSION);
             String bdir = _context.getBaseDir().getAbsolutePath();
             if (bdir.startsWith(home))
                 bdir = "$HOME" + bdir.substring(home.length());
@@ -366,6 +381,14 @@ public class ZzzOTController implements ClientApp {
             FileOutputStream os = new FileOutputStream(outFile);
             os.write(html.getBytes("UTF-8"));
             os.close();
+            // index.html
+            String html2 = FileUtil.readTextFile(index_in.getAbsolutePath(), 19, true);
+            if (html2 == null)
+                throw new IOException(fileTmpl.getAbsolutePath() + " open failed");
+            html2 = html2.replace("$B32", b32);
+            FileOutputStream os2 = new FileOutputStream(index_out);
+            os2.write(html2.getBytes("UTF-8"));
+            os2.close();
             Thread t = new I2PAppThread(new Launcher(), "ZzzOTHelp", true);
             t.start();
         } catch (IOException ioe) {
@@ -443,6 +466,16 @@ public class ZzzOTController implements ClientApp {
     }
 
     /////// end ClientApp methods
+
+    /** @since 0.17.0 */
+    public static String getSiteName() {
+        return _sitename;
+    }
+
+    /** @since 0.17.0 */
+    public static String getVersion() {
+        return VERSION;
+    }
 
     /** @since 0.12.0 */
     private synchronized void changeState(ClientAppState state) {

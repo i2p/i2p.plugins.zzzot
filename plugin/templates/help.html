@@ -1,74 +1,384 @@
-<html><head><title>ZzzOT Plugin Help</title></head>
-<body style="background-color: #ddd; color: #a30;">
-<h2>Welcome to the ZzzOT I2P Plugin!</h2>
+<!DOCTYPE HTML>
+<html>
 
-A new eepsite tunnel and Jetty server have been started for your open tracker.
+<head>
+   <meta charset="UTF-8">
+   <title>ZZZOT OPENTRACKER | HELP</title>
+   <style type="text/css">
+      html,
+      body {
+         min-width: 600px;
+         min-height: 100%;
+         line-height: 1.4;
+         font-size: 14pt;
+         font-family: "Droid Sans", "Open Sans", "Noto Sans", Ubuntu, "Segoe UI", "Lucida Grande", "DejaVu Sans", Helvetica, sans-serif;
+         color: #ccc;
+         background: #111;
+         overflow-x: hidden;
+         scrollbar-color: #222 #111;
+      }
 
-<p><a href="/tracker/index.jsp">Click here to see the current stats</a>.
-This link is also at the top of your router console when ZzzOT is running.
+      @supports (background-blend-mode: overlay) {
+         html, body {
+         background: repeating-linear-gradient(45deg, #333, #111 2px, #111 3px),
+                     repeating-linear-gradient(135deg, #444, #333 2px, #222 3px) #111;
+         background-blend-mode: overlay, normal;
+         background-size: 100% 100%, 100% 100%;
+         background-attachment: fixed;
+         }
+      }
 
-<p>Report bugs or add comments on
-<a href="http://zzz.i2p//forums/16">the plugin forum on zzz.i2p</a>.
+      ::selection,
+      ::-moz-selection {
+         text-shadow: none;
+         background: #431;
+         color: #fff;
+      }
 
-<p><b>This help file is $PLUGIN/eepsite/docroot/help.html, you should probably move it
-    outside of the document root before you announce your eepsite as it may contain your user name.</b>
+      code::-moz-selection,
+      #b64::-moz-selection,
+      code::selection,
+      #b64::selection {
+         background: #150;
+         color: #fff;
+      }
 
-<h3>Eepsite Key and Helpful Hints for I2P</h3>
+      p,
+      li,
+      code {
+         text-shadow: 0 1px 1px #000;
+      }
 
-<p>Your Base 32 address is <a href="http://$B32/">$B32</a>.
-    Others may access your eepsite using this address, even if you do not publish a hostname.
-<p>Once you decide on a host name, you may
-   <a href="http://127.0.0.1:7657/susidns/addressbook.jsp?book=private&destination=$B64">add the key to your local addressbook here</a>.
-<p>Your Base 64 key is: &nbsp;&nbsp;&nbsp;<textarea rows="1" style="height: 3em;" cols="40" readonly="readonly" wrap="off">$B64</textarea>
-<p>To generate a registration authentication string for your host name, run the following command line:
-    <br><tt>java -jar $I2P/lib/i2p.jar privatekeyfile -a your-hostname.i2p $PLUGIN/eepPriv.dat</tt>
-    <br>You will need this authentication string to register a hostname at <a href="http://stats.i2p/i2p/addkey.html">stats.i2p</a>.
-<p>Your private key file is $PLUGIN/eepPriv.dat - back it up!!!
+      #container {
+         padding: 5% 15%;
+      }
 
-<p>The supported announce URLs are:
-   <ul>
-   <li><a href="http://$B32/a">http://$B32/a</a>
-   <li><a href="http://$B32/announce">http://$B32/announce</a>
-   <li><a href="http://$B32/announce.jsp">http://$B32/announce.jsp</a>
-   <li><a href="http://$B32/announce.php">http://$B32/announce.php</a>
-   <li><a href="http://$B32/tracker/a">http://$B32/tracker/a</a>
-   <li><a href="http://$B32/tracker/announce">http://$B32/tracker/announce</a>
-   <li><a href="http://$B32/tracker/announce.jsp">http://$B32/tracker/announce.jsp</a>
-   <li><a href="http://$B32/tracker/announce.php">http://$B32/tracker/announce.php</a>
-   </ul>
-<p>The supported scrape URLs are:
-   <ul>
-   <li><a href="http://$B32/scrape">http://$B32/scrape</a>
-   <li><a href="http://$B32/scrape.jsp">http://$B32/scrape.jsp</a>
-   <li><a href="http://$B32/scrape.php">http://$B32/scrape.php</a>
-   <li><a href="http://$B32/tracker/scrape">http://$B32/tracker/scrape</a>
-   <li><a href="http://$B32/tracker/scrape.jsp">http://$B32/tracker/scrape.jsp</a>
-   <li><a href="http://$B32/tracker/scrape.php">http://$B32/tracker/scrape.php</a>
-   </ul>
+      #panel {
+         padding: 20px 40px 15px;
+         font-size: 85%;
+         text-align: justify;
+         border: 1px solid #555;
+         box-shadow: inset 0 0 0 1px #111, inset 0 0 2px 1px #444, 0 0 2px 2px #000;
+         background: #181818;
+         background: repeating-linear-gradient(to right, rgba(255, 255, 255, .05), rgba(0, 0, 0, .08) 2px),
+                     repeating-linear-gradient(to bottom, #222, #111 2px);
+         background-blend-mode: overlay;
+         will-change: transform;
+      }
 
-<h3>Configuration and Customization</h3>
+      @supports not (-moz-appearance: none) {
+        #panel {
+           background: repeating-linear-gradient(to bottom, #222, #111 2px);
+        }
+      }
 
-<p>Your eepsite tunnel is configured for 2 inbound and 2 outbound tunnels, 3 hops each.
-   You may change tunnel settings by editing $PLUGIN/i2ptunnel.config and restarting the plugin.
-   The tunnel will not appear in <a href="http://127.0.0.1:7657/i2ptunnel/index.jsp">i2ptunnel</a>.
-   <i>If your tracker gets over 1000 peers, you will probably want to increase the number of tunnels.</i>
+      #sitename,
+      #sitename:hover,
+      #sitename:focus {
+         margin: -8px 0 -14px;
+         display: inline-block;
+         font-size: 500%;
+         -moz-user-select: none;
+         -webkit-user-select: none;
+         user-select: none;
+      }
 
-<p>The only configuration for zzzot itself is the "interval", which tells the clients how long to
-   wait between announces. The default is 1620 seconds (27 minutes).
-   <i>The easiest way to reduce the load on your tracker is to increase the interval.</i>
-   To do so, edit the file $PLUGIN/zzzot.config, then stop and restart the plugin.
+      hr.heading {
+         margin: -10px 0 15px;
+         height: 1px;
+         color: transparent;
+         border: none;
+         background: repeating-linear-gradient(to right, rgba(255, 255, 255, .05), rgba(0, 0, 0, .08) 2px),
+                     linear-gradient(to right, #888, #666 20%, rgba(0, 0, 0, 0) 90%);
+         filter: drop-shadow(0 1px 1px #000);
+         animation: ease-out underline 1s forwards;
+         will-change: transform;
+      }
 
-<p>The Jetty webserver port is 7662. If you must change it, edit jetty.xml, i2ptunnel.config, and plugins.config
-    in the directory $PLUGIN. Then stop and restart the plugin.
+      @keyframes underline {
+          from {
+             width: 0;
+          }
+          to {
+             width: 100%;
+          }
+      }
 
-<p>Your eepsite home page is $PLUGIN/eepsite/docroot/index.html,
-   you may edit it to add information about your tracker or links to additional content.
+      #v {
+         margin-left: -10px;
+      }
 
-<p>Your eepsite document root is $PLUGIN/eepsite/docroot/,
-   you may put other files there if you wish to have additional content on your eepsite.
+      h2,
+      h3 {
+         color: #ccc;
+         text-shadow: 0 0 2px #181818, 0 3px 1px #000;
+      }
 
-<p>As you probably know, an open tracker does not require torrents to be registered,
-   and it does not host torrent files. You can, however, host torrent files elsewhere on
-   the eepsite, for example at <a href="http://$B32/torrents/">/torrents</a>.
+      h2 {
+         margin-top: 10px;
+      }
 
-</body></html>
+      h3 {
+         padding: 5px 0 0;
+      }
+
+      h2::first-letter,
+      h3::first-letter {
+         font-size: 114%;
+      }
+
+      a:link,
+      .urls li {
+         font-weight: bold;
+         text-decoration: none;
+         color: #c4ad9d;
+         outline: none;
+      }
+
+      #local {
+         font-weight: normal;
+         color: #bbb;
+      }
+
+      a:visited {
+         color: #a98770;
+      }
+
+      a:hover,
+      a:focus {
+         color: #e88b44;
+      }
+
+      code,
+      #b64 {
+         white-space: nowrap;
+         font-weight: bold;
+         font-family: "Droid Sans Mono", "Noto Mono", "DejaVu Sans Mono", "Lucida Console", monospace;
+         font-size: 90%;
+         color: #292;
+         -moz-user-select: all;
+         -webkit-user-select: all;
+         user-select: all;
+      }
+
+      #b64 {
+         margin-bottom: -5px;
+         width: 100%;
+         display: inline-block;
+         white-space: no-wrap;
+         overflow: hidden;
+         text-overflow: ellipsis;
+      }
+
+      #b64:focus {
+         white-space: normal;
+         word-break: break-all;
+         overflow: normal;
+         outline: none;
+      }
+
+      .warn {
+         margin-top: 18px;
+         padding: 15px 18px 15px 54px;
+         line-height: 1.2;
+         border: 1px solid #900;
+         border-radius: 4px;
+         box-shadow: inset 0 0 0 1px #000, inset 0 0 2px 1px #900, 0 0 2px 1px rgba(0, 0, 0, .2);
+         background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACcAAAAhCAMAAAEaI3KMAAAACXBIWXMAAA7DAAAOwwHHb6hkAAACbVBMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAQECAgIDAAADAgIEBAQGBAQGBQUGBgYHAQAHBwcICAgJCQkKAQAKCgoLAQALCwsMCwsODg4PDw8QAQAQAgASAAASAwAVCwsaGhobDw8bExMbGxskHx8mJiYpAwAqKiotKysuAQAwLi4yMjI8HR08JiY9CAA/CAA/Pz9BQUFDQ0NKBwBLPDxLS0tTAwBhBABmZmZpAABpPT1tEABvEAB4RUV4WFh4a2uCBwCECACGhoaHeHiUAQCWFgCaFgCclZWkDgClVFSlb2+0lZW0tLS2FQC4BQC9vb3GGQDGxsbIVlbKWFjMFwDOCgDPfn7RFADUrKnV1dXWCgDWEgDWLR7YBATYEADYg4PZ2dnaAwPakozbEADbp6fbysrb29vezc3e1NTe3t7hDQDhIxjk5OTlb2nlcWvmCwDqwL7qysnq6urrCQDrDAPrDgbtAADtgIDv7+/wQkLwS0bxBgDxPTjzBADzhITzq6vz8/P1oJ/1qKf19fX2BAD209P51tb7AgD7HBv77+/7+/v8/Pz/AAD/DAz/amr/bm7/cnL/enr/goL/ior/k5P/lJT/mJj/m5v/o6P/q6v/s7P/t7f/uLj/u7v/vr7/w8P/xcX/yMj/y8v/09P/2Nj/29v/4+P/5OT/6en/6ur/6+v/8fH/8vL/9PT//Pz//f3////ZtbwoAAAAJXRSTlMAAwYMEhUYGyEkMDxCS1ppeISHkJacpairtMPP2Nvk5+3w8/n8UHR7egAAAp9JREFUGBmFwYlDi2EcB/BvB6lRjoxOS/1ykzPkFrmv3GdCyZEzLMRcrZdhjjG3MV4du/S2aU1puXn+Js87G/WWfD4I8W4FkMpaARgEwYAexAHQgFM1gbOPtAPThPUCQNxQyOb5w/Db2aYsKR4y62txgWglILosaDVkQxAS5p+HoK1NXhUC4qVxjccRYG/NYvZUcGQVF4uvreAMgrBeEAyTgNVlQb2QRkE9EaK+fFENhbQWToMOyO3++dPtJrQz2+lkmdnM6ZyJkJgN9+oYmzuZsbp7G2IQ0P+A+b7JZCooMJlMD8wH+oNLOaM7X8GtWlXBndedSQGSSztJRoiKekNpypcxUEh66X+RhA6i1rS0tKzpgfbI6/3q9RLaidvrbmTv3Hvj8NcoSbpEJyVpBP5IfORsfkIHm513ExEUucRuZ4xuMrt9SQR+yzhd+5kxYuxz7bkMBMQWWl+JokiiKL6yFsZCRmaziSMTZzYTuIRThmsCRwJ31XAsAQjP1ekqZFQh0+lyw5FeppSO5aVKy6AmpUFQitIs2rMwLQr/oaKdbW1t20iFbsVRyQdZCcWhG+rRF3w+33ufz3dhtBr/EpY057HH4/Ezv8fjeTwnKQxditQsbeA+5VP+xwZuqSYSXYjJ2OJyueq/HxpP2fu+1btcro0ZMegkloodDsfbH4wNo4kn2Y+3DoejmGKhED/8iM1mkxg3legNY0yy2WyHhw9AB4k5d6qrayQmm0+zmEyqqa6+k5OIvyJS8x5aLJZnzwNW0ornAU8tFsvDvNQIBEWnrzMajbdv3FS6fstoNK5Nj0ZAH9qh1+urrlQGZVJmZdCVKr1ev536gOtHRVqttvxE18q1Wm0R9QUGTth/9H/2j43HoBmbd+3u3q5N0wf/ApzdYLKMtOjLAAAAAElFTkSuQmCC) 12px center no-repeat, repeating-linear-gradient(to bottom, rgba(0, 0, 0, .5), rgba(64, 0, 0, .2) 2px), linear-gradient(to bottom, #222, #111);
+         background-size: 32px auto, 100% 100%, 100% 100%;
+         will-change: transform;
+      }
+
+      .emphasis {
+         margin-top: 4px;
+         display: inline-block;
+         line-height: 110%;
+         color: #900;
+         font-weight: bold;
+      }
+
+      ul {
+         margin-top: -10px;
+      }
+
+      ul#config {
+         list-style-type: square;
+      }
+
+      #config li {
+         padding-top: 10px;
+      }
+
+      #config li br {
+         display: none;
+      }
+
+      .urls li {
+         margin-left: -15px;
+         list-style-type: none;
+      }
+
+      .urls li::before {
+         margin: 2px 0 -3px;
+         width: 22px;
+         height: 20px;
+         display: inline-block;
+         content: "";
+         background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAABEVBMVEUAAAAAAAAAAAAAAAAAAABDREYAAAAAAAAAAACDhYgAAABmaGuPkZRZWlyFh4oAAABkZWcAAAAAAABRUlRiY2ZPUVN4eXtydHdcXV9YWVtCQ0QxMjM2Nzh6fH6DhIcAAAAAAAB3eXt3enxoaWtlZ2p2d3pwcnWCg4Z7fH5OTlBnaWtdXmAxMTJXWFoyMjRAQEIAAABeYGJmZ2qIio2jpKfx8vOKjZDLzM7v7+6wsrWdnqCAgYSbnJ6Nj5KMjY58foFxcnXp6urh4uTOz9KztreYmp2QkJOFh4uSlJaPkJF/f4NVVljR0tS/vsC8vsCsrrKgoqSXl5uQkpN6e31ub3JsbXBdYGJaW12/v8G+vb+SlJjRk2qVAAAAMnRSTlMABAwWJ4UHQiBhEWDohWEw7ToU8e3r5dKRg3tpXz05Nw/v7ejEvrGtfHRtaGZXV0w5MLROkgwAAAE3SURBVDjLndHXcoJAFIBhlyWEGA2WJJY003tjAQ2hKQIGe4tJ3v9BsjDOeLEcLzy335nZPfOnNpzTjEnILYIY7SnNVm/g2QLgO4ra/jPHw8kNgvyDlJ9KvuJwoGcl/sUezQtJ78fO17i7X0/G7MJJ5BWeQ7thPcixC0Km2Sb3kX/WNfk4zSykzVZn6lwKsW+J7J1Yc21dXTzHziccgYlvNKzu0lHCwnnkPy7k6FBvWN+6Eazxr6Izk/ePqDP9NHJB/WCbzplInenn+gb1vIgxTgsJ/To2/V8xjxHUZxr9zxFBrzqq1dVnGOpXecst5L4B9svyolQNXagfdU54XNOvHPUF+5Ge+VqjDvcbjEvvDyHYr3DtDX27D3qKk+yJMvICyFMI56+c+aofOwKWVv0SB3GFuN9m8w950jtLubKVyAAAAABJRU5ErkJggg==) left center no-repeat;
+         background-size: 16px 16px;
+         filter: sepia(1) saturate(.4) drop-shadow(0 1px 1px #000);
+      }
+
+      .external::before {
+         content: "";
+         display: inline-block;
+         width: 16px;
+         height: 14px;
+         vertical-align: middle;
+         background:url(data:image/png;base64,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) center top no-repeat;
+         background-size: 12px 12px;
+         opacity: .7;
+      }
+
+      .external:hover::before {
+         opacity: 1;
+      }
+
+      @supports (-webkit-text-stroke-width: 1px) {
+
+         #sitename,
+         #sitename:hover,
+         #sitename:focus {
+            background: #731;
+            background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .5) 2px),
+                        linear-gradient(to bottom, rgba(255, 96, 0, .2), rgba(0, 0, 0, .9) 100%),
+                        linear-gradient(to bottom, #210, #310 15%, #fff 50%, #310 80%);
+            -moz-background-clip: text !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -moz-text-fill-color: transparent !important;
+            -webkit-text-fill-color: transparent !important;
+            text-fill-color: transparent !important;
+            filter: drop-shadow(0 0 2px #000);
+            -webkit-text-stroke-color: #999;
+            -webkit-text-stroke-width: 0.02em;
+         }
+
+         #sitename:hover,
+         #sitename:focus {
+            background: #951;
+            background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, .2), rgba(0, 0, 0, .3) 2px),
+                        linear-gradient(to bottom, rgba(255, 255, 255, .2), rgba(0, 0, 0, .7) 100%),
+                        linear-gradient(to bottom, #930, #d50 15%, #fff 50%, #930 80%, #000 100%, #ff0 150%);
+            filter: drop-shadow(0 0 2px #b00);
+            -webkit-text-stroke-color: #bbb;
+         }
+      }
+
+      @media screen and (max-width: 1200px) {
+         #help {
+            font-size: 90%;
+         }
+
+         .external::before {
+            margin-left: -2px;
+         }
+      }
+
+      @media screen and (max-width: 1400px) {
+         #container {
+            padding: 2% !important;
+         }
+
+         #panel {
+            padding: 20px 35px 10px;
+         }
+
+         #sitename,
+         #sitename:hover,
+         #sitename:focus {
+            margin: -14px 0;
+         }
+
+         code:not(#b64) {
+            display: inline-block;
+            white-space: normal;
+            text-align: left;
+         }
+
+         br + code {
+            margin-top: 3px;
+         }
+
+         #config li br {
+            display: block;
+         }
+      }
+   </style>
+</head>
+
+<body id="help">
+   <div id="container">
+      <div id="panel">
+         <a href="http://127.0.0.1:7662/" title="OpenTracker homepage" alt="OpenTracker homepage"><span id="sitename">ZZZOT</span></a>
+         <span id="v">$VERSION</span>
+         <h2>Welcome to the ZzzOT I2P Plugin!</h2>
+         <hr class="heading">
+         <p class="warn" id="docroot">This help file is located at: <code>$PLUGIN/eepsite/docroot/help.html</code><br><span class="emphasis"><b>You should probably move it outside of the document root before you announce your eepsite as it may contain your username.</b></span></p>
+         <p>ZzzOT is a simple in-memory BitTorrent open <a href="https://en.wikipedia.org/wiki/BitTorrent_tracker" class="external" target="_blank">tracker</a>, wrapped into an I2P plugin. The software depends on several I2P libraries, in addition to <code>i2psnark.jar</code> from the I2P installation for bencoding. Please report bugs on <a href="http://trac.i2p2.i2p/" target="_blank">trac.i2p2.i2p</a> or add comments and feature requests on <a href="http://zzz.i2p/forums/16" target="_blank">the plugin forum</a> on zzz.i2p.</p>
+         <p>Source code is available (under the <a href="https://www.apache.org/licenses/LICENSE-2.0.html" class="external" target="_blank">Apache 2.0 license</a>) via the <code>i2p.plugins.zzzot</code> branch in the <a href="https://geti2p.net/en/get-involved/guides/monotone" class="external" target="_blank">I2P monotone</a> database, or on <a href="https://github.com/i2p/i2p.plugins.zzzot" class="external" target="_blank">github</a>. Note that the I2P source code must be available (and compiled) in <code>../i2p.i2p</code> in order to build ZzzOT.</p>
+         <h3>Configuration &amp; Customization</h3>
+         <hr class="heading">
+         <ul id="config">
+            <li>A new eepsite tunnel and Jetty server have been started for your open tracker, configured for 2 inbound and 2 outbound tunnels, 3 hops each. If your tracker gets over 1000 peers, you will probably want to increase the number of tunnels.</li>
+            <li>To change the tunnel settings, edit: <code>$PLUGIN/i2ptunnel.config</code> (the tunnel will not appear in the <a href="http://127.0.0.1:7657/i2ptunnelmgr" target="_blank">Tunnel Manager</a>), then stop and restart the plugin from the <a href="http://127.0.0.1:7657/configplugins" target="_blank">Plugin Manager</a>.</li>
+            <li>The Jetty webserver is running on port <code>7662</code>. If you must change it, edit: <code>jetty.xml</code>, <code>i2ptunnel.config</code>, and <code>plugins.config</code> in: <code>$PLUGIN/</code>, then stop and restart the plugin.</li>
+            <li>The only configuration for ZzzOT itself is the <i>interval</i>, which tells clients how long to wait between announces. The default is 1620 seconds (27 minutes). Note: The easiest way to reduce the load on your tracker is to increase the interval. To do so, edit the file: <code>$PLUGIN/zzzot.config</code>, then stop and restart the plugin.</li>
+            <li>Live stats are available on the <a href="http://127.0.0.1:7662/tracker" target="_blank">tracker page</a> (this link is also on your router console sidebar when ZzzOT is running).</li>
+            <li>To change the display name for the site (for the logo and page titles), add the line: <code>sitename=<i>mytracker</i></code> to: <code>$PLUGIN/zzzot.config</code> (substituting <i>mytracker</i> with your desired name) and then stop and restart the plugin.</li>
+            <li>If you wish to change the appearance of the site, edit the css file located at: <br><code>$PLUGIN/eepsite/docroot/tracker.css</code></li>
+            <li>Your eepsite home page is located at: <code>$PLUGIN/eepsite/docroot/index.html</code>, you may edit it to add information about your tracker or links to additional content.</li>
+            <li>Your eepsite document root is: <code>$PLUGIN/eepsite/docroot/</code>. You may put other files there if you wish to host additional content on your eepsite.</li>
+            <li>Directory listings are enabled on the server, so you don't need to create a web page to serve files; content in any folders you create in your document root will be immediately available to your visitors. The quickest method to disable listings is to place an empty <code>index.html</code> file in any folder you wish to disable.</li>
+           <li>Open trackers do not require torrents to be registered, and do not host torrent files. However, you can host torrent files elsewhere on the eepsite, for example at <a href="/torrents/" target="_blank">/torrents</a>.</li>
+         </ul>
+         <h3>Eepsite Key &amp; Hostname Registration</h3>
+         <hr class="heading">
+         <p class="warn">Your private key file is located at: <code>$PLUGIN/eepPriv.dat</code><br><span class="emphasis">Make sure you backup this file and move the copy outside of <code>$PLUGIN/</code> as it controls ownership of your B64/B32 address.</span></p>
+         <p>Your Base 32 address is: <a href="http://$B32/" target="_blank">$B32</a><br>Others may access your eepsite using this address, even if you do not publish a hostname.</p>
+         <p>Your Base 64 key is:<br><code id="b64" tabindex="1">$B64</code><br>Once you decide on a hostname, you may <a href="http://127.0.0.1:7657/susidns/addressbook.jsp?book=private&destination=$B64" target="_blank">add the key</a> to your local addressbook.</p>
+         <p>To generate a registration authentication string for your hostname (required for <a href="http://stats.i2p/i2p/addkey.html" target="_blank">hostname registration</a> at stats.i2p), run the following from the command line:<br><code>java -jar $I2P/lib/i2p.jar privatekeyfile -a <i>your-hostname</i>.i2p $PLUGIN/eepPriv.dat</code></p>
+         <h3>Tracker URLs</h3>
+         <hr class="heading">
+         <p>Tracker statistics:</p>
+         <ul class="urls">
+            <li><a href="http://$B32/tracker">http://$B32/tracker</a></li>
+            <li><a href="http://$B32/tracker/">http://$B32/tracker/</a></li>
+            <li><a href="http://$B32/tracker/index.html">http://$B32/tracker/index.html</a></li>
+            <li><a href="http://$B32/tracker/index.jsp">http://$B32/tracker/index.jsp</a></li>
+         </ul>
+         <p>Supported announce URLs:</p>
+         <ul class="urls">
+            <li><a href="http://$B32/a">http://$B32/a</a></li>
+            <li><a href="http://$B32/announce">http://$B32/announce</a></li>
+            <li><a href="http://$B32/announce.jsp">http://$B32/announce.jsp</a></li>
+            <li><a href="http://$B32/announce.php">http://$B32/announce.php</a></li>
+            <li><a href="http://$B32/tracker/a">http://$B32/tracker/a</a></li>
+            <li><a href="http://$B32/tracker/announce">http://$B32/tracker/announce</a></li>
+            <li><a href="http://$B32/tracker/announce.jsp">http://$B32/tracker/announce.jsp</a></li>
+            <li><a href="http://$B32/tracker/announce.php">http://$B32/tracker/announce.php</a></li>
+         </ul>
+         <p>Supported scrape URLs:</p>
+         <ul class="urls">
+            <li><a href="http://$B32/scrape">http://$B32/scrape</a></li>
+            <li><a href="http://$B32/scrape.jsp">http://$B32/scrape.jsp</a></li>
+            <li><a href="http://$B32/scrape.php">http://$B32/scrape.php</a></li>
+            <li><a href="http://$B32/tracker/scrape">http://$B32/tracker/scrape</a></li>
+            <li><a href="http://$B32/tracker/scrape.jsp">http://$B32/tracker/scrape.jsp</a></li>
+            <li><a href="http://$B32/tracker/scrape.php">http://$B32/tracker/scrape.php</a></li>
+         </ul>
+      </div>
+   </div>
+</body>
+
+</html>

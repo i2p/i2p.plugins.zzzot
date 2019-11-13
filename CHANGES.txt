@@ -1,86 +1,85 @@
-0.16.0
-  2017-05-21
-  Fix scrape response (requires I2P 0.9.30-8) (ticket #1994)
+2019-11-xx [0.17.0]
+  - Add more configuration, customization, and registration info to help page
+  - Change default sig type to EdDSA
+  - Add variables for $VERSION and $SITENAME
+  - Add custom CSS to docroot/tracker.css to allow customization
+  - Tidy CHANGES.txt and add to plugin/
+  - Changes for new installs only:
+    - Enhance presentation of help page
+    - Modify docroot/index.html post-install to contain b32
+    - Only display warning about moving help.html if necessary
+    - Add rewrite rules for /tracker, /tracker/, /tracker/index.html,
+      /help and /help/ to jetty.xml
+    - Replace jetty.servlet.DeaultServlet with I2PDefaultServlet in BaseContext.xml
 
-0.15.0
-  2017-03-11
-  Increase default limits, set I2CP tag options
-  Update eepsite configuration for Jetty 9 (I2P 0.9.30)
+2017-05-21 [0.16.0]
+  - Fix scrape response (requires I2P 0.9.30-8) (ticket #1994)
 
-0.14.0
-  2015-05-28
-  Remove use of deprecated SimpleScheduler (ticket #1523)
-  Remove static structures
-  Use RandomIterator for efficiency
+2017-03-11 [0.15.0]
+  - Increase default limits, set I2CP tag options
+  - Update eepsite configuration for Jetty 9 (I2P 0.9.30)
 
-0.13.0
-  2014-11-29
-  Fix NPE on missing announce parameters
-  Increase startup delay
+2015-05-28 [0.14.0]
+  - Remove use of deprecated SimpleScheduler (ticket #1523)
+  - Remove static structures
+  - Use RandomIterator for efficiency
 
-0.12.0
-  2014-11-13
-  Fix parameter decoding for scrape also
-  Add caching for info hashes and peer ids
-  Stop cleaner when plugin stops
-  Move to the ClientApp interface, remove all static refs
-  Attempt to fix crash after update
-  Add zzzot.config file to set interval
-  Don't overwrite index.html and robots.txt in the update
-  Release all resources when shut down (requires 0.9.16-6 or higher)
+2014-11-29 [0.13.0]
+  - Fix NPE on missing announce parameters
+  - Increase startup delay
 
-0.11.0
-  2014-11-11
-  Critical fix for announce parameter decoding, triggered by recent Jetty versions
-  Change request queueing in jetty.xml (new installs only)
-  SU3 plugin file format
+2014-11-13 [0.12.0]
+  - Fix parameter decoding for scrape also
+  - Add caching for info hashes and peer ids
+  - Stop cleaner when plugin stops
+  - Move to the ClientApp interface, remove all static refs
+  - Attempt to fix crash after update
+  - Add zzzot.config file to set interval
+  - Don't overwrite index.html and robots.txt in the update
+  - Release all resources when shut down (requires 0.9.16-6 or higher)
 
-0.10.0
-  2013-04-14
-  Updates and migration for Jetty 7 (I2P 0.9.6)
+2014-11-11 [0.11.0]
+  - Critical fix for announce parameter decoding, triggered by recent Jetty versions
+  - Change request queueing in jetty.xml (new installs only)
+  - SU3 plugin file format
 
-0.9.0
-  2013-01-25
-  Add cache-control directives
-  Set max Jetty to 6.99999
+2013-04-14 [0.10.0]
+  - Updates and migration for Jetty 7 (I2P 0.9.6)
 
-0.8
-  2012-03-10
-  fix comment in jetty.xml
+2013-01-25 [0.9.0]
+  - Add cache-control directives
+  - Set max Jetty to 6.99999
 
-0.7
-  2012-03-10
-  Port to Jetty 6
-  Replace QForwardHandler with RewriteHandler
-  Use ${ant.home}/lib/ant.jar instead of pulling ant.jar from Jetty
-  
-0.6
-  2011-12-31
-  Set max jetty version 5.99999
-  Add throttle options
-  Stub out announce-to-seedless
-  Seedless fixes, untested
+2012-03-10 [0.8]
+  - Fix comment in jetty.xml
 
-0.5
-  2010-07-11
-  Final compact response format
+2012-03-10 [0.7]
+  - Port to Jetty 6
+  - Replace QForwardHandler with RewriteHandler
+  - Use ${ant.home}/lib/ant.jar instead of pulling ant.jar from Jetty
 
-0.4
-  2010-07-09
-  Compact request/response support - may not be final format
-  Fix NPE if no ip parameter
+2011-12-31 [0.6]
+  - Set max jetty version 5.99999
+  - Add throttle options
+  - Stub out announce-to-seedless
+  - Seedless fixes, untested
 
-0.3
-  2010-04-13
-  Verify dest
-  Add xfs check
+2010-07-11 [0.5]
+   - Final compact response format
 
-0.2
-  2010-03-23
-  Cache b64 dest strings
-  Help typo fix (thx duck)
-  Lots of seedless fixes
-  Build cleanups
+2010-07-09 [0.4]
+  - Compact request/response support - may not be final format
+  - Fix NPE if no ip parameter
 
-0.1
-  2010-03-23
+2010-04-13 [0.3]
+  - Verify dest
+  - Add xfs check
+
+2010-03-23 [0.2]
+  - Cache b64 dest strings
+  - Help typo fix (thx duck)
+  - Lots of seedless fixes
+  - Build cleanups
+
+2010-03-23 [0.1]
+  - Initial release

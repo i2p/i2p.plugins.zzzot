@@ -86,7 +86,6 @@
     </target>
 
     <target name="war" depends="precompilejsp"> 
-        <copy file="jsp/index.html" todir="build/war" />
         <war destfile="build/tracker.war.jar" webxml="build/web.xml">
             <fileset dir="build/war" />
         </war>
