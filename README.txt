@@ -2,6 +2,7 @@ ZzzOT I2P Open Tracker Plugin
 -----------------------------
 
 This is a very simple in-memory open tracker, wrapped into an I2P plugin.
+A compiled version of the plugin is available at http://stats.i2p/i2p/plugins/
 
 The plugin starts a new http server tunnel, eepsite, and Jetty server running at
 port 7662. The tracker status is available at http://127.0.0.1:7662/tracker/

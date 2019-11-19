@@ -67,13 +67,19 @@ public class ZzzOTController implements ClientApp {
     private static volatile ZzzOTController _controller;
     // you wouldn't run two instances in the same JVM, would you?
     private static String _sitename;
+    private static String _showfooter;
+    private static String _footertext;
 
     private ClientAppState _state = UNINITIALIZED;
 
     private static final String NAME = "ZzzOT";
     private static final String DEFAULT_SITENAME = "ZZZOT";
     private static final String PROP_SITENAME = "sitename";
-    private static final String VERSION = "0.16.1";
+    private static final String VERSION = "0.17.0";
+    private static final String DEFAULT_SHOWFOOTER = "true";
+    private static final String PROP_SHOWFOOTER = "showfooter";
+    private static final String DEFAULT_FOOTERTEXT = "Running <a href=\"https://github.com/i2p/i2p.plugins.zzzot\" target=\"_blank\">ZZZOT</a> " + VERSION;
+    private static final String PROP_FOOTERTEXT = "footertext";
     private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty8";
     private static final String[] xmlFiles = {
@@ -102,6 +108,8 @@ public class ZzzOTController implements ClientApp {
         }
         _zzzot = new ZzzOT(ctx, props);
         _sitename = props.getProperty(PROP_SITENAME, DEFAULT_SITENAME);
+        _showfooter = props.getProperty(PROP_SHOWFOOTER, DEFAULT_SHOWFOOTER);
+        _footertext = props.getProperty(PROP_FOOTERTEXT, DEFAULT_FOOTERTEXT);
         _state = INITIALIZED;
     }
 
@@ -194,7 +202,7 @@ public class ZzzOTController implements ClientApp {
         if (dest != null) {
             List msgs = tun.clearMessages();
             for (Object s : msgs) {
-                 _log.error("NOTICE: ZzzOT Tunnel message: " + s);
+                 _log.logAlways(Log.INFO, "NOTICE: ZzzOT Tunnel message: " + s);
             }
         }
         _tunnel = tun;
@@ -357,7 +365,7 @@ public class ZzzOTController implements ClientApp {
         String b64 = dest.toBase64();
         try {
             // help.html
-            String html = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 400, true);
+            String html = FileUtil.readTextFile(fileTmpl.getAbsolutePath(), 500, true);
             if (html == null)
                 throw new IOException(fileTmpl.getAbsolutePath() + " open failed");
             // replace $HOME in path
@@ -382,7 +390,7 @@ public class ZzzOTController implements ClientApp {
             os.write(html.getBytes("UTF-8"));
             os.close();
             // index.html
-            String html2 = FileUtil.readTextFile(index_in.getAbsolutePath(), 19, true);
+            String html2 = FileUtil.readTextFile(index_in.getAbsolutePath(), 50, true);
             if (html2 == null)
                 throw new IOException(fileTmpl.getAbsolutePath() + " open failed");
             html2 = html2.replace("$B32", b32);
@@ -475,6 +483,16 @@ public class ZzzOTController implements ClientApp {
     /** @since 0.17.0 */
     public static String getVersion() {
         return VERSION;
+    }
+
+    /** @since 0.17.0 */
+    public static String shouldShowFooter() {
+        return _showfooter;
+    }
+
+    /** @since 0.17.0 */
+    public static String footerText() {
+        return _footertext;
     }
 
     /** @since 0.12.0 */

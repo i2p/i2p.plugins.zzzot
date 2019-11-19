@@ -7,6 +7,7 @@
 <noscript><meta http-equiv="refresh" content="300;url=."></noscript>
 <title><%=ZzzOTController.getSiteName()%> OPENTRACKER | STATS</title>
 <link href="/tracker.css" rel="stylesheet" type="text/css">
+<link rel="icon" type="image/png" href="/favicon.png">
 </head>
 <body id="stats">
 <div id="container">
@@ -16,7 +17,7 @@
     Torrents torrents = ZzzOTController.getTorrents();
     if (torrents != null) {
 %>
-<p>
+<p id="totals">
 <b>Torrents:</b> <%=torrents.size()%><br>
 <b>Peers:</b> <%=torrents.countPeers()%><br>
 </p>
@@ -27,13 +28,20 @@
 <%
     }
 %>
-<span id="footer" class="version">Running ZZZOT <%=ZzzOTController.getVersion()%></span>
+<%
+    String showfooter = ZzzOTController.shouldShowFooter();
+    if (showfooter == "true") {
+%>
+<span id="footer" class="version"><%=ZzzOTController.footerText()%></span>
+<%
+    }
+%>
 </div>
 </div>
 <script type="text/javascript">
   setInterval(function() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', '/tracker/index.jsp?' + new Date().getTime(), true);
+    xhr.open('GET', '/tracker/?' + new Date().getTime(), true);
     xhr.responseType = "text";
     xhr.onreadystatechange = function () {
       if (xhr.readyState==4 && xhr.status==200) {

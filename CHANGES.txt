@@ -2,15 +2,22 @@
   - Add more configuration, customization, and registration info to help page
   - Change default sig type to EdDSA
   - Add variables for $VERSION and $SITENAME
-  - Add custom CSS to docroot/tracker.css to allow customization
+  - Add custom CSS to docroot/tracker.css to allow customization and include
+    alternative tracker-purple.css
+  - Add favicon.png to docroot
+  - Add custom icon for homepage
+  - Add auto page reload for tracker stats (ajax with meta refresh fallback)
+  - Add footer to /tracker with ZzzOT version and github link
+  - Add config options to hide version footer on /tracker or change footer text
   - Tidy CHANGES.txt and add to plugin/
   - Changes for new installs only:
     - Enhance presentation of help page
-    - Modify docroot/index.html post-install to contain b32
+    - Modify docroot/index.html post-install to contain b32 footer
     - Only display warning about moving help.html if necessary
     - Add rewrite rules for /tracker, /tracker/, /tracker/index.html,
       /help and /help/ to jetty.xml
-    - Replace jetty.servlet.DeaultServlet with I2PDefaultServlet in BaseContext.xml
+    - Replace jetty.servlet.DefaultServlet with I2PDefaultServlet in BaseContext.xml
+      (requires I2P 0.9.31 or newer)
 
 2017-05-21 [0.16.0]
   - Fix scrape response (requires I2P 0.9.30-8) (ticket #1994)
