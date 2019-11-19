@@ -89,7 +89,7 @@ code {
         filter: drop-shadow(0 0 2px #000);
         -webkit-text-stroke-color: #999;
         -webkit-text-stroke-width: 0.02em;
-        animation: ease-in-out spinwash 60s 15s alternate infinite;
+        animation: ease-in-out spinwash 60s 15s forwards infinite;
     }
 
     #sitename:hover, #sitename:focus {
