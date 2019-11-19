@@ -1,6 +1,5 @@
 2019-11-xx [0.17.0]
   - Add more configuration, customization, and registration info to help page
-  - Change default sig type to EdDSA
   - Add variables for $VERSION and $SITENAME
   - Add custom CSS to docroot/tracker.css to allow customization and include
     alternative tracker-purple.css
@@ -10,7 +9,9 @@
   - Add footer to /tracker with ZzzOT version and github link
   - Add config options to hide version footer on /tracker or change footer text
   - Tidy CHANGES.txt and add to plugin/
+  - Start tunnel in background after first install
   - Changes for new installs only:
+    - Change default sig type to EdDSA
     - Enhance presentation of help page
     - Modify docroot/index.html post-install to contain b32 footer
     - Only display warning about moving help.html if necessary

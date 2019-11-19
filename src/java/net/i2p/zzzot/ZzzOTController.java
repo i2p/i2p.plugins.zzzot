@@ -196,14 +196,15 @@ public class ZzzOTController implements ClientApp {
             throw new IllegalArgumentException("Cannot open " + i2ptunnelConfig.getAbsolutePath() + ' ' + ioe);
         }
         TunnelController tun = new TunnelController(i2ptunnelProps, "tunnel.0.");
-        // start in foreground so we can get the destination
-        //tun.startTunnelBackground();
-        tun.startTunnel();
         if (dest != null) {
+            // start in foreground so we can get the destination
+            tun.startTunnel();
             List msgs = tun.clearMessages();
             for (Object s : msgs) {
                  _log.logAlways(Log.INFO, "NOTICE: ZzzOT Tunnel message: " + s);
             }
+        } else {
+            tun.startTunnelBackground();
         }
         _tunnel = tun;
     }
