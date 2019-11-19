@@ -149,24 +149,6 @@
             </Item>
             <Item>
               <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
-                <Set name="pattern">/tracker</Set>
-                <Set name="replacement">/tracker/index.jsp</Set>
-              </New>
-            </Item>
-            <Item>
-              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
-                <Set name="pattern">/tracker/</Set>
-                <Set name="replacement">/tracker/index.jsp</Set>
-              </New>
-            </Item>
-            <Item>
-              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
-                <Set name="pattern">/tracker/index.html</Set>
-                <Set name="replacement">/tracker/index.jsp</Set>
-              </New>
-            </Item>
-            <Item>
-              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
                 <Set name="pattern">/a</Set>
                 <Set name="replacement">/tracker/announce.jsp</Set>
               </New>
