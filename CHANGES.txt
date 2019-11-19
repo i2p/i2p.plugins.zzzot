@@ -15,8 +15,8 @@
     - Enhance presentation of help page
     - Modify docroot/index.html post-install to contain b32 footer
     - Only display warning about moving help.html if necessary
-    - Add rewrite rules for /tracker, /tracker/, /tracker/index.html,
-      /help and /help/ to jetty.xml
+    - Add rewrite rules for /tracker/ and /tracker/index.html to web.xml
+    - Add rewrite rules for /help and /help/ to jetty.xml
     - Replace jetty.servlet.DefaultServlet with I2PDefaultServlet in BaseContext.xml
       (requires I2P 0.9.31 or newer)
 
