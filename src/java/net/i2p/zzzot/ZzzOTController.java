@@ -75,7 +75,7 @@ public class ZzzOTController implements ClientApp {
     private static final String NAME = "ZzzOT";
     private static final String DEFAULT_SITENAME = "ZZZOT";
     private static final String PROP_SITENAME = "sitename";
-    private static final String VERSION = "0.17.0";
+    private static final String VERSION = "0.18.0";
     private static final String DEFAULT_SHOWFOOTER = "true";
     private static final String PROP_SHOWFOOTER = "showfooter";
     private static final String DEFAULT_FOOTERTEXT = "Running <a href=\"https://github.com/i2p/i2p.plugins.zzzot\" target=\"_blank\">ZZZOT</a> " + VERSION;
@@ -195,6 +195,8 @@ public class ZzzOTController implements ClientApp {
             _log.error("Cannot open " + i2ptunnelConfig.getAbsolutePath() + ' ' + ioe);
             throw new IllegalArgumentException("Cannot open " + i2ptunnelConfig.getAbsolutePath() + ' ' + ioe);
         }
+        if (i2ptunnelProps.getProperty("tunnel.0.option.i2cp.leaseSetEncType") == null)
+            i2ptunnelProps.setProperty("tunnel.0.option.i2cp.leaseSetEncType", "4,0");
         TunnelController tun = new TunnelController(i2ptunnelProps, "tunnel.0.");
         if (dest != null) {
             // start in foreground so we can get the destination

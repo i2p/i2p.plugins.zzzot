@@ -16,7 +16,7 @@
         <delete dir="plugin/eepsite/docroot/torrents/" />
         <!-- get version number -->
         <buildnumber file="scripts/build.number" />
-        <property name="release.number" value="0.17.0" />
+        <property name="release.number" value="0.18.0" />
 
         <!-- make the update xpi2p -->
         <!-- this contains everything except i2ptunnel.config -->
@@ -34,13 +34,13 @@
             <arg value="version=${release.number}-b${build.number}" />
         </exec>
         <exec executable="pack200" failonerror="true">
-            <arg value="-g" />
-            <arg value="plugin/lib/zzzot.jar.pack" />
+            <arg value="-r" />
+            <arg value="plugin/lib/zzzot.jar" />
             <arg value="src/build/zzzot.jar" />
         </exec>
         <exec executable="pack200" failonerror="true">
-            <arg value="-g" />
-            <arg value="plugin/eepsite/webapps/tracker.war.pack" />
+            <arg value="-r" />
+            <arg value="plugin/eepsite/webapps/tracker.war" />
             <arg value="src/build/tracker.war.jar" />
         </exec>
         <input message="Enter su3 signing key password:" addproperty="release.password.su3" />
@@ -87,8 +87,8 @@
         <delete file="plugin/eepsite/docroot/tracker.css" />
         <delete file="plugin/eepsite/docroot/tracker-purple.css" />
         <delete file="plugin/eepsite/docroot/favicon.png" />
-        <delete file="plugin/lib/zzzot.jar.pack" />
-        <delete file="plugin/eepsite/webapps/tracker.war.pack" />
+        <delete file="plugin/lib/zzzot.jar" />
+        <delete file="plugin/eepsite/webapps/tracker.war" />
         <delete file="plugin/CHANGES.txt" />
         <delete file="plugin/LICENSE.txt" />
         <delete file="plugin/README.txt" />
