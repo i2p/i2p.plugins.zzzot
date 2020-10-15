@@ -7,6 +7,17 @@
 #  zzz 2010-02
 #  zzz 2014-08 added support for su3 files
 #
+
+if [ -z "$I2P" -a -d "$PWD/../i2p.i2p/pkg-temp" ]; then
+	export I2P=../i2p.i2p/pkg-temp
+fi
+
+if [ ! -d "$I2P" ]; then
+	echo "Can't locate your I2P installation. Please add a environment variable named I2P with the path to the folder as value"
+	echo "On OSX this solved with running: export I2P=/Applications/i2p if default install directory is used."
+	exit 1
+fi
+
 PUBKEYDIR=$HOME/.i2p-plugin-keys
 PUBKEYFILE=$PUBKEYDIR/plugin-public-signing.key
 PRIVKEYFILE=$PUBKEYDIR/plugin-private-signing.key
@@ -14,8 +25,6 @@ B64KEYFILE=$PUBKEYDIR/plugin-public-signing.txt
 PUBKEYSTORE=$PUBKEYDIR/plugin-su3-public-signing.crt
 PRIVKEYSTORE=$PUBKEYDIR/plugin-su3-keystore.ks
 KEYTYPE=RSA_SHA512_4096
-
-export I2P=../i2p.i2p/pkg-temp
 
 PLUGINDIR=${1:-plugin}
 
