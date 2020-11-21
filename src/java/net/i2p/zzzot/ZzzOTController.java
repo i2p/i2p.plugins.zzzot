@@ -78,7 +78,7 @@ public class ZzzOTController implements ClientApp {
     private static final String VERSION = "0.18.0";
     private static final String DEFAULT_SHOWFOOTER = "true";
     private static final String PROP_SHOWFOOTER = "showfooter";
-    private static final String DEFAULT_FOOTERTEXT = "Running <a href=\"https://github.com/i2p/i2p.plugins.zzzot\" target=\"_blank\">ZZZOT</a> " + VERSION;
+    private static final String DEFAULT_FOOTERTEXT = "Running <a href=\"http://git.idk.i2p/i2p-hackers/i2p.plugins.zzzot\" target=\"_blank\">ZZZOT</a> " + VERSION;
     private static final String PROP_FOOTERTEXT = "footertext";
     private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty8";
