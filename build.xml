@@ -33,11 +33,13 @@
         <exec executable="echo" osfamily="unix" failonerror="true" output="plugin/plugin.config" append="true">
             <arg value="version=${release.number}-b${build.number}" />
         </exec>
+        <mkdir dir="plugin/lib/" />
         <exec executable="pack200" failonerror="true">
             <arg value="-r" />
             <arg value="plugin/lib/zzzot.jar" />
             <arg value="src/build/zzzot.jar" />
         </exec>
+        <mkdir dir="plugin/eepsite/webapps/" />
         <exec executable="pack200" failonerror="true">
             <arg value="-r" />
             <arg value="plugin/eepsite/webapps/tracker.war" />
