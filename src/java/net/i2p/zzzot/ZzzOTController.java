@@ -182,6 +182,9 @@ public class ZzzOTController implements ClientApp {
         startJetty(pluginDir, dest);
         startI2PTunnel(pluginDir, dest);
         _zzzot.start();
+        // requires I2P 0.9.53 (1.7.0)
+        UDPHandler udp = new UDPHandler(_context, _tunnel.getTunnel(), _zzzot);
+        udp.start();
         // SeedlessAnnouncer.announce(_tunnel);
     }
 

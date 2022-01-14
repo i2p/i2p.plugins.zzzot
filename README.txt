@@ -31,6 +31,11 @@ Valid announce URLs:
     /tracker/announce.jsp
     /tracker/announce.php
 
+As of release 0.19.0, ZzzOT also supports UDP announces at the URL:
+    udp://example.i2p/
+No port or path is required.
+See http://i2p-projekt.i2p/spec/proposals/160 for details.
+
 Valid scrape URLs:
     /scrape
     /scrape.jsp
@@ -38,6 +43,8 @@ Valid scrape URLs:
     /tracker/scrape
     /tracker/scrape.jsp
     /tracker/scrape.php
+
+
 
 The tracker also responds to seedless queries at:
     /Seedless/index.jsp

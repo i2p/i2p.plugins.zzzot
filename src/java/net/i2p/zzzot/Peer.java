@@ -68,11 +68,17 @@ public class Peer extends HashMap<String, Object> {
     /** convert b64.i2p to a Hash, then to a binary string */
     /* or should we just store it in the constructor? cache it? */
     public String getHash() {
+        try {
+            return new String(getHashObject().getData(), "ISO-8859-1");
+        } catch (UnsupportedEncodingException uee) { return null; }
+    }
+
+    /**
+     *  @since 0.19
+     */
+    public Hash getHashObject() {
         String ip = (String) get("ip");
         byte[] b = Base64.decode(ip.substring(0, ip.length() - 4));
-        Hash h = SHA256Generator.getInstance().calculateHash(b);
-        try {
-            return new String(h.getData(), "ISO-8859-1");
-        } catch (UnsupportedEncodingException uee) { return null; }
+        return SHA256Generator.getInstance().calculateHash(b);
     }
 }
