@@ -15,6 +15,7 @@ There is also some code modified from Jetty 5.1.15. See LICENSES.txt for the
 zzzot and Jetty licenses.
 
 I2P source must be installed and built in ../i2p.i2p to compile this package.
+I2P 1.7.0 or higher required to build and run.
 
 Sure, as a standalone program in its own JVM with Jetty, this would be a pig -
 you should use the C opentracker instead. But since you're already running the
