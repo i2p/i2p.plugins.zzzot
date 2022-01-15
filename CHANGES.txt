@@ -1,3 +1,7 @@
+2022-xx-xx [0.19.0]
+  - UDP announce support (proposal 160)
+    (requires I2P 1.7.0/API 0.9.53 or higher)
+
 2020-08-30 [0.18.0]
   - Enable both encryption types
   - Disable pack200

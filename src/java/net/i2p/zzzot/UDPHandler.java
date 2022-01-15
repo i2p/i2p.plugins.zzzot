@@ -32,7 +32,6 @@ import net.i2p.client.datagram.I2PDatagramDissector;
 import net.i2p.data.DataHelper;
 import net.i2p.data.Destination;
 import net.i2p.i2ptunnel.I2PTunnel;
-import net.i2p.router.util.RandomIterator;
 import net.i2p.util.I2PAppThread;
 import net.i2p.util.Log;
 import net.i2p.util.SimpleTimer2;
