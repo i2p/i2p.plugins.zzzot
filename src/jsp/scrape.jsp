@@ -50,8 +50,12 @@
 	}
 
 	boolean all = info_hash == null;
+	if (all && !ZzzOTController.allowFullScrape()) {
+		fail = true;
+		msg = "unsupported";
+	}
 
-        Torrents torrents = ZzzOTController.getTorrents();
+	Torrents torrents = fail ? null : ZzzOTController.getTorrents();
 	if (torrents == null && !fail) {
 		fail = true;
 		msg = "tracker is down";

@@ -67,8 +67,9 @@ public class ZzzOTController implements ClientApp {
     private static volatile ZzzOTController _controller;
     // you wouldn't run two instances in the same JVM, would you?
     private static String _sitename;
-    private static String _showfooter;
+    private static boolean _showfooter;
     private static String _footertext;
+    private static boolean _fullScrape;
 
     private ClientAppState _state = UNINITIALIZED;
 
@@ -80,6 +81,8 @@ public class ZzzOTController implements ClientApp {
     private static final String PROP_SHOWFOOTER = "showfooter";
     private static final String DEFAULT_FOOTERTEXT = "Running <a href=\"http://git.idk.i2p/i2p-hackers/i2p.plugins.zzzot\" target=\"_blank\">ZZZOT</a> " + VERSION;
     private static final String PROP_FOOTERTEXT = "footertext";
+    private static final String PROP_FULLSCRAPE = "allowFullScrape";
+    private static final String DEFAULT_FULLSCRAPE = "false";
     private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty8";
     private static final String[] xmlFiles = {
@@ -108,8 +111,9 @@ public class ZzzOTController implements ClientApp {
         }
         _zzzot = new ZzzOT(ctx, props);
         _sitename = props.getProperty(PROP_SITENAME, DEFAULT_SITENAME);
-        _showfooter = props.getProperty(PROP_SHOWFOOTER, DEFAULT_SHOWFOOTER);
+        _showfooter = Boolean.parseBoolean(props.getProperty(PROP_SHOWFOOTER, DEFAULT_SHOWFOOTER));
         _footertext = props.getProperty(PROP_FOOTERTEXT, DEFAULT_FOOTERTEXT);
+        _fullScrape = Boolean.parseBoolean(props.getProperty(PROP_FULLSCRAPE, DEFAULT_FULLSCRAPE));
         _state = INITIALIZED;
     }
 
@@ -492,13 +496,18 @@ public class ZzzOTController implements ClientApp {
     }
 
     /** @since 0.17.0 */
-    public static String shouldShowFooter() {
+    public static boolean shouldShowFooter() {
         return _showfooter;
     }
 
     /** @since 0.17.0 */
     public static String footerText() {
         return _footertext;
+    }
+
+    /** @since 0.19.0 */
+    public static boolean allowFullScrape() {
+        return _fullScrape;
     }
 
     /** @since 0.12.0 */

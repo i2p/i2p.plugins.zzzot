@@ -29,8 +29,8 @@
     }
 %>
 <%
-    String showfooter = ZzzOTController.shouldShowFooter();
-    if (showfooter == "true") {
+    boolean showfooter = ZzzOTController.shouldShowFooter();
+    if (showfooter) {
 %>
 <span id="footer" class="version"><%=ZzzOTController.footerText()%></span>
 <%
