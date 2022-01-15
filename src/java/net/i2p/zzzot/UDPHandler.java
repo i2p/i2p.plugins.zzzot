@@ -294,7 +294,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         }
 
         int count = peerlist != null ? peerlist.size() : 0;
-        byte[] resp = new byte[20 + (32 * count)];
+        byte[] resp = new byte[22 + (32 * count)];
         resp[3] = (byte) ACTION_ANNOUNCE;
         DataHelper.toLong(resp, 4, 4, transID);
         DataHelper.toLong(resp, 8, 4, torrents.getInterval());
