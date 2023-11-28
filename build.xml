@@ -40,6 +40,7 @@
             <arg value="src/build/zzzot.jar" />
         </exec>
         <mkdir dir="plugin/eepsite/webapps/" />
+        <mkdir dir="plugin/eepsite/logs/" />
         <exec executable="pack200" failonerror="true">
             <arg value="-r" />
             <arg value="plugin/eepsite/webapps/tracker.war" />
