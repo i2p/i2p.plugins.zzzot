@@ -189,6 +189,13 @@
                 <Set name="replacement">/tracker/scrape.jsp</Set>
               </New>
             </Item>
+            <!-- BiglyBT -->
+            <Item>
+              <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
+                <Set name="pattern">/a/scrape</Set>
+                <Set name="replacement">/tracker/scrape.jsp</Set>
+              </New>
+            </Item>
             <Item>
               <New class="org.eclipse.jetty.rewrite.handler.RewritePatternRule">
                 <Set name="pattern">/Seedless</Set>
