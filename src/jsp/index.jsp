@@ -22,6 +22,7 @@
 <b>Peers:</b> <%=torrents.countPeers()%><br>
 </p>
 <%
+/*
         String host = request.getHeader("Host");
         if (host != null) {
             int colon = host.indexOf(":");
@@ -30,6 +31,7 @@
             host = net.i2p.data.DataHelper.escapeHTML(host);
             %><p><b>Now with UDP announce support!</b><br>udp://<%=host%>/</p><%
         }
+*/
     } else {
 %>
 <p id="initializing"><b><i>Initializing OpenTracker&hellip;</i></b></p>
