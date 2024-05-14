@@ -19,7 +19,7 @@ I2P 1.7.0 or higher required to build and run.
 
 Sure, as a standalone program in its own JVM with Jetty, this would be a pig -
 you should use the C opentracker instead. But since you're already running the
-JVM and Jetty, running this in the same JVM probably doesn't hog to much more
+JVM and Jetty, running this in the same JVM probably doesn't hog too much more
 memory.
 
 Valid announce URLs:
