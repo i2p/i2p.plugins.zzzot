@@ -20,6 +20,7 @@
 <p id="totals">
 <b>Torrents:</b> <%=torrents.size()%><br>
 <b>Peers:</b> <%=torrents.countPeers()%><br>
+<b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
 </p>
 <%
 /*
