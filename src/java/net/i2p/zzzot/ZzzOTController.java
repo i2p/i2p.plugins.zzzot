@@ -160,6 +160,29 @@ public class ZzzOTController implements ClientApp {
     }
 
     /**
+     *  @return false if not running
+     *  @since 0.20.0
+     */
+    public static boolean isUDPEnabled() {
+        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
+        if (mgr == null)
+            return false;
+        ClientApp z = mgr.getRegisteredApp(NAME);
+        if (z == null)
+            return false;
+        ZzzOTController ctrlr = (ZzzOTController) z;
+        return ctrlr.getUDPEnabled();
+    }
+
+    /**
+     *  @return false if not running
+     *  @since 0.20.0
+     */
+    private boolean getUDPEnabled() {
+        return _enableUDP;
+    }
+
+    /**
      *  @param args ignored
      */
     private void start(String args[]) {

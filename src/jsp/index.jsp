@@ -21,10 +21,17 @@
 <b>Torrents:</b> <%=torrents.size()%><br>
 <b>Peers:</b> <%=torrents.countPeers()%><br>
 <b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
-<!--
-<b>UDP Announce Support:</b> yes<br>
-<b>UDP Connection Lifetime:</b> <%=torrents.getUDPLifetime() / 60%> minutes<br>
--->
+<%
+    boolean udp = ZzzOTController.isUDPEnabled();
+%>
+<b>UDP Announce Support:</b><%=udp ? "yes" : "no"%><br>
+<%
+    if (udp) {
+%>
+        <b>UDP Connection Lifetime:</b> <%=torrents.getUDPLifetime() / 60%> minutes<br>
+<%
+    }
+%>
 </p>
 <%
 /*
