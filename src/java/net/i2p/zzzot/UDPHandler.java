@@ -55,8 +55,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private volatile boolean _running;
 
     // The listen port.
-    // Not configurable.
-    public static final int PORT = 6969;
+    public final int PORT;
     private static final long MAGIC = 0x41727101980L;
     private static final int ACTION_CONNECT = 0;
     private static final int ACTION_ANNOUNCE = 1;
@@ -70,7 +69,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private final long CLEAN_TIME;
 
 
-    public UDPHandler(I2PAppContext ctx, I2PTunnel tunnel, ZzzOT zzzot) {
+    public UDPHandler(I2PAppContext ctx, I2PTunnel tunnel, ZzzOT zzzot, int port) {
         _context = ctx;
         _log = ctx.logManager().getLog(UDPHandler.class);
         _tunnel = tunnel;
@@ -78,6 +77,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         _diss = new I2PDatagramDissector();
         _connectCache = new ConcurrentHashMap<Long, DestAndTime>();
         CLEAN_TIME = (zzzot.getTorrents().getUDPLifetime() + 60) * 1000;
+        PORT = port;
         _cleaner = new Cleaner();
     }
 

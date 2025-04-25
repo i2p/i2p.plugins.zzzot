@@ -71,6 +71,7 @@ public class ZzzOTController implements ClientApp {
     private static String _footertext;
     private static boolean _fullScrape;
     private final boolean _enableUDP;
+    private final int _udpPort;
     private UDPHandler _udp;
 
     private ClientAppState _state = UNINITIALIZED;
@@ -87,6 +88,8 @@ public class ZzzOTController implements ClientApp {
     private static final String DEFAULT_FULLSCRAPE = "false";
     private static final String PROP_UDP = "udp";
     private static final String DEFAULT_UDP = "false";
+    private static final String PROP_UDP_PORT = "udp";
+    private static final int DEFAULT_UDP_PORT = 6969;
     private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty8";
     private static final String[] xmlFiles = {
@@ -119,6 +122,14 @@ public class ZzzOTController implements ClientApp {
         _footertext = props.getProperty(PROP_FOOTERTEXT, DEFAULT_FOOTERTEXT);
         _fullScrape = Boolean.parseBoolean(props.getProperty(PROP_FULLSCRAPE, DEFAULT_FULLSCRAPE));
         _enableUDP = Boolean.parseBoolean(props.getProperty(PROP_UDP, DEFAULT_UDP));
+        int p = DEFAULT_UDP_PORT;
+        String port = props.getProperty(PROP_UDP_PORT);
+        if (port != null) {
+            try {
+                p = Integer.parseInt(port);
+            } catch (NumberFormatException nfe) {}
+        }
+        _udpPort = p;
         _state = INITIALIZED;
     }
 
@@ -183,6 +194,13 @@ public class ZzzOTController implements ClientApp {
     }
 
     /**
+     *  @since 0.20.0
+     */
+    public int getUDPPort() {
+        return _udpPort;
+    }
+
+    /**
      *  @param args ignored
      */
     private void start(String args[]) {
@@ -216,7 +234,7 @@ public class ZzzOTController implements ClientApp {
         _zzzot.start();
         // requires I2P 0.9.66 (2.9.0)
         if (_enableUDP) {
-            _udp = new UDPHandler(_context, _tunnel.getTunnel(), _zzzot);
+            _udp = new UDPHandler(_context, _tunnel.getTunnel(), _zzzot, _udpPort);
             _udp.start();
         }
     }
