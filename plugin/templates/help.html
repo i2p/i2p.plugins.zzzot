@@ -357,8 +357,8 @@
          <h2>Welcome to the ZzzOT I2P Plugin!</h2>
          <hr class="heading">
          <p class="warn" id="docroot">This help file is located at: <code>$PLUGIN/eepsite/docroot/help.html</code><br><span class="emphasis"><b>You should probably move it outside of the document root before you announce your eepsite as it may contain your username.</b></span></p>
-         <p>ZzzOT is a simple in-memory BitTorrent open <a href="https://en.wikipedia.org/wiki/BitTorrent_tracker" class="external" target="_blank">tracker</a>, wrapped into an I2P plugin. The software depends on several I2P libraries, in addition to <code>i2psnark.jar</code> from the I2P installation for <a href="https://en.wikipedia.org/wiki/Bencode" class="external" target="_blank">bencoding</a>. Please report bugs on <a href="http://trac.i2p2.i2p/" target="_blank">trac.i2p2.i2p</a> or add comments and feature requests on <a href="http://zzz.i2p/forums/16" target="_blank">the plugin forum</a> on zzz.i2p.</p>
-         <p>Source code is available (under the <a href="https://www.apache.org/licenses/LICENSE-2.0.html" class="external" target="_blank">Apache 2.0 license</a>) via the <code>i2p.plugins.zzzot</code> branch in the <a href="https://geti2p.net/en/get-involved/guides/monotone" class="external" target="_blank">I2P monotone</a> database, or on <a href="https://github.com/i2p/i2p.plugins.zzzot" class="external" target="_blank">github</a>. Note that the I2P source code must be available (and compiled) in <code>../i2p.i2p</code> in order to build ZzzOT.</p>
+         <p>ZzzOT is a simple in-memory BitTorrent open <a href="https://en.wikipedia.org/wiki/BitTorrent_tracker" class="external" target="_blank">tracker</a>, wrapped into an I2P plugin. The software depends on several I2P libraries, in addition to <code>i2psnark.jar</code> from the I2P installation for <a href="https://en.wikipedia.org/wiki/Bencode" class="external" target="_blank">bencoding</a>. Please report bugs on <a href="http://i2pforum.i2p/" target="_blank">i2pforum.i2p</a>. New releases will be announced on <a href="http://zzz.i2p/forums/16" target="_blank">the plugin forum</a> on zzz.i2p.</p>
+         <p>Source code is available (under the <a href="https://www.apache.org/licenses/LICENSE-2.0.html" class="external" target="_blank">Apache 2.0 license</a>) at <a href="http://git.idk.i2p/I2P_Developers/i2p.plugins.zzzot" target="_blank">our Gitea site</a> and on <a href="https://github.com/i2p/i2p.plugins.zzzot" class="external" target="_blank">github</a>. Note that the I2P source code must be available (and compiled) in <code>../i2p.i2p</code> in order to build ZzzOT.</p>
          <h3>Configuration &amp; Customization</h3>
          <hr class="heading">
          <ul id="config">
@@ -366,8 +366,10 @@
             <li>To change the tunnel settings, edit: <code>$PLUGIN/i2ptunnel.config</code> (the tunnel will not appear in the <a href="http://127.0.0.1:7657/i2ptunnelmgr" target="_blank">Tunnel Manager</a>), then stop and restart the plugin from the <a href="http://127.0.0.1:7657/configplugins" target="_blank">Plugin Manager</a>.</li>
             <li>The Jetty webserver is running on port <code>7662</code>. If you must change it, edit: <code>jetty.xml</code>, <code>i2ptunnel.config</code>, and <code>plugins.config</code> in: <code>$PLUGIN/</code>, then stop and restart the plugin.</li>
             <li>The configuration file for ZzzOT is located at: <code>$PLUGIN/zzzot.config</code>
-            <li>The only configuration for ZzzOT itself is the <i>interval</i>, which tells clients how long to wait between announces. The default is 1620 seconds (27 minutes).</li>
-            <li>The easiest way to reduce the load on your tracker is to increase the interval. To do so, edit the configuration file, then stop and restart the plugin.</li>
+            <li>The most important configuration for ZzzOT is the <code>interval</code>, which tells clients how long to wait between announces. The default is 1620 seconds (27 minutes).</li>
+            <li>The easiest way to reduce the load on your tracker is to increase the <code>interval</code>. To do so, edit the configuration file, then stop and restart the plugin.</li>
+            <li>UDP may also be enabled or disabled, and the connection lifetime changed, in the configuration file.</li>
+            <li>All conguration changes require the plugin to be stoped and restarted.</li>
             <li>Live stats are available on the <a href="http://127.0.0.1:7662/tracker" target="_blank">tracker page</a> (this link is also on your router console sidebar when ZzzOT is running).</li>
             <li>To change the display name for the site (for the logo and page titles), add the line: <code>sitename=<i>mytracker</i></code> to the configuration file (substituting <i>mytracker</i> with your desired name) and then stop and restart the plugin.</li>
             <li>To change the footer text displayed on the tracker stats page, add the line: <code>footertext=<i>alternative text</i></code> to the configuration file, and then stop and restart the plugin.</li>
@@ -404,7 +406,11 @@
             <li><a href="http://$B32/tracker/announce.jsp">http://$B32/tracker/announce.jsp</a></li>
             <li><a href="http://$B32/tracker/announce.php">http://$B32/tracker/announce.php</a></li>
          </ul>
-         <p>Supported scrape URLs:</p>
+         <p>UDP announce URL, if enabled (enabled by default):</p>
+         <ul class="urls">
+            <li><a href="udp://$B32:6969/">udp://$B32:6969/</a></li>
+         </ul>
+         <p>Supported scrape URLs, if enabled (disabled by default):</p>
          <ul class="urls">
             <li><a href="http://$B32/scrape">http://$B32/scrape</a></li>
             <li><a href="http://$B32/scrape.jsp">http://$B32/scrape.jsp</a></li>
