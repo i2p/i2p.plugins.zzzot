@@ -67,7 +67,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private static final int EVENT_COMPLETED = 1;
     private static final int EVENT_STARTED = 2;
     private static final int EVENT_STOPPED = 3;
-    private static final long CLEAN_TIME = 2*60*1000;
+    private final long CLEAN_TIME;
 
 
     public UDPHandler(I2PAppContext ctx, I2PTunnel tunnel, ZzzOT zzzot) {
@@ -77,6 +77,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         _zzzot = zzzot;
         _diss = new I2PDatagramDissector();
         _connectCache = new ConcurrentHashMap<Long, DestAndTime>();
+        CLEAN_TIME = (zzzot.getTorrents().getUDPLifetime() + 60) * 1000;
         _cleaner = new Cleaner();
     }
 
@@ -94,6 +95,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
                     continue;
                 }
                 I2PSession session = sessions.get(0);
+                // TODO switch to Datagram2
                 session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM, PORT);
                 session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM_RAW, PORT);
                 _cleaner.schedule(CLEAN_TIME);
@@ -119,6 +121,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         try {
             // receive message
             byte[] msg = session.receiveMessage(id);
+            // TODO switch to Datagram2
             if (proto == I2PSession.PROTO_DATAGRAM) {
                 // load datagram into it
                 _diss.loadI2PDatagram(msg);
@@ -170,7 +173,12 @@ public class UDPHandler implements I2PSessionMuxedListener {
             }
             handleConnect(session, from, fromPort, data);
         } else if (action == ACTION_ANNOUNCE) {
-            handleAnnounce(session, connID, from, fromPort, data);
+            if (from != null) {
+                if (_log.shouldWarn())
+                    _log.warn("dropping repliable announce");
+                return;
+            }
+            handleAnnounce(session, connID, fromPort, data);
         } else if (action == ACTION_SCRAPE) {
             if (_log.shouldWarn())
                 _log.warn("got unsupported scrape");
@@ -186,9 +194,11 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private void handleConnect(I2PSession session, Destination from, int fromPort, byte[] data) {
         int transID = (int) DataHelper.fromLong(data, 12, 4);
         long connID = _context.random().nextLong();
-        byte[] resp = new byte[16];
+        byte[] resp = new byte[18];
         DataHelper.toLong(resp, 4, 4, transID);
         DataHelper.toLong8(resp, 8, connID);
+        // Addition to BEP 15
+        DataHelper.toLong(resp, 16, 2, _zzzot.getTorrents().getUDPLifetime());
         try {
             session.sendMessage(from, resp, I2PSession.PROTO_DATAGRAM_RAW, PORT, fromPort);
             if (_log.shouldDebug())
@@ -203,22 +213,20 @@ public class UDPHandler implements I2PSessionMuxedListener {
     /**
      *  @param from may be null
      */
-    private void handleAnnounce(I2PSession session, long connID, Destination from, int fromPort, byte[] data) {
+    private void handleAnnounce(I2PSession session, long connID, int fromPort, byte[] data) {
         int sz = data.length;
         if (sz < 96) {
             if (_log.shouldWarn())
                 _log.warn("dropping short announce length " + sz);
             return;
         }
-        if (from == null) {
-            DestAndTime dat = _connectCache.get(Long.valueOf(connID));
-            if (dat == null) {
-                if (_log.shouldWarn())
-                    _log.warn("no connID found " + connID);
-                return;
-            }
-            from = dat.dest;
+        DestAndTime dat = _connectCache.get(Long.valueOf(connID));
+        if (dat == null) {
+            if (_log.shouldWarn())
+                _log.warn("no connID found " + connID);
+            return;
         }
+        Destination from = dat.dest;
 
         // parse packet
         int transID = (int) DataHelper.fromLong(data, 12, 4);

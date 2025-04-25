@@ -21,6 +21,10 @@
 <b>Torrents:</b> <%=torrents.size()%><br>
 <b>Peers:</b> <%=torrents.countPeers()%><br>
 <b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
+<!--
+<b>UDP Announce Support:</b> yes<br>
+<b>UDP Connection Lifetime:</b> <%=torrents.getUDPLifetime() / 60%> minutes<br>
+-->
 </p>
 <%
 /*

@@ -35,11 +35,15 @@ class ZzzOT {
     private final long EXPIRE_TIME;
 
     private static final String PROP_INTERVAL = "interval";
+    private static final String PROP_UDP_LIFETIME = "lifetime";
     private static final long CLEAN_TIME = 4*60*1000;
     private static final long DEST_CACHE_CLEAN_TIME = 3*60*60*1000;
     private static final int DEFAULT_INTERVAL = 27*60;
+    private static final int DEFAULT_UDP_LIFETIME = 20*60;
     private static final int MIN_INTERVAL = 15*60;
     private static final int MAX_INTERVAL = 6*60*60;
+    private static final int MIN_UDP_LIFETIME = 60;
+    private static final int MAX_UDP_LIFETIME = 6*60*60;
 
     ZzzOT(I2PAppContext ctx, Properties p) {
         String intv = p.getProperty(PROP_INTERVAL);
@@ -53,7 +57,18 @@ class ZzzOT {
                     interval = MAX_INTERVAL;
             } catch (NumberFormatException nfe) {}
         }
-        _torrents = new Torrents(interval);
+        intv = p.getProperty(PROP_UDP_LIFETIME);
+        int lifetime = DEFAULT_UDP_LIFETIME;
+        if (intv != null) {
+            try {
+                lifetime = Integer.parseInt(intv);
+                if (lifetime < MIN_UDP_LIFETIME)
+                    interval = MIN_UDP_LIFETIME;
+                else if (interval > MAX_UDP_LIFETIME)
+                    interval = MAX_UDP_LIFETIME;
+            } catch (NumberFormatException nfe) {}
+        }
+        _torrents = new Torrents(interval, lifetime);
         EXPIRE_TIME = 1000 * (interval + interval / 2);
         _cleaner  = new Cleaner(ctx);
     }
