@@ -70,6 +70,8 @@ public class ZzzOTController implements ClientApp {
     private static boolean _showfooter;
     private static String _footertext;
     private static boolean _fullScrape;
+    private final boolean _enableUDP;
+    private UDPHandler _udp;
 
     private ClientAppState _state = UNINITIALIZED;
 
@@ -83,6 +85,8 @@ public class ZzzOTController implements ClientApp {
     private static final String PROP_FOOTERTEXT = "footertext";
     private static final String PROP_FULLSCRAPE = "allowFullScrape";
     private static final String DEFAULT_FULLSCRAPE = "false";
+    private static final String PROP_UDP = "udp";
+    private static final String DEFAULT_UDP = "false";
     private static final String CONFIG_FILE = "zzzot.config";
     private static final String BACKUP_SUFFIX = ".jetty8";
     private static final String[] xmlFiles = {
@@ -114,6 +118,7 @@ public class ZzzOTController implements ClientApp {
         _showfooter = Boolean.parseBoolean(props.getProperty(PROP_SHOWFOOTER, DEFAULT_SHOWFOOTER));
         _footertext = props.getProperty(PROP_FOOTERTEXT, DEFAULT_FOOTERTEXT);
         _fullScrape = Boolean.parseBoolean(props.getProperty(PROP_FULLSCRAPE, DEFAULT_FULLSCRAPE));
+        _enableUDP = Boolean.parseBoolean(props.getProperty(PROP_UDP, DEFAULT_UDP));
         _state = INITIALIZED;
     }
 
@@ -186,12 +191,11 @@ public class ZzzOTController implements ClientApp {
         startJetty(pluginDir, dest);
         startI2PTunnel(pluginDir, dest);
         _zzzot.start();
-/*
-        // requires I2P 0.9.53 (1.7.0)
-        UDPHandler udp = new UDPHandler(_context, _tunnel.getTunnel(), _zzzot);
-        udp.start();
-*/
-        // SeedlessAnnouncer.announce(_tunnel);
+        // requires I2P 0.9.66 (2.9.0)
+        if (_enableUDP) {
+            _udp = new UDPHandler(_context, _tunnel.getTunnel(), _zzzot);
+            _udp.start();
+        }
     }
 
 
@@ -247,6 +251,8 @@ public class ZzzOTController implements ClientApp {
     private void stop() {
         stopI2PTunnel();
         stopJetty();
+        if (_udp != null)
+            _udp.stop();
         _zzzot.stop();
     }
 

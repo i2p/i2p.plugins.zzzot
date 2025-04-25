@@ -52,11 +52,11 @@ public class UDPHandler implements I2PSessionMuxedListener {
     // conn ID to dest and time added
     private final Map<Long, DestAndTime> _connectCache;
     private final Cleaner _cleaner;
+    private volatile boolean _running;
 
     // The listen port.
-    // We listen on all ports, so the announce URL
-    // doesn't need a port.
-    public static final int PORT = I2PSession.PORT_ANY;
+    // Not configurable.
+    public static final int PORT = 6969;
     private static final long MAGIC = 0x41727101980L;
     private static final int ACTION_CONNECT = 0;
     private static final int ACTION_ANNOUNCE = 1;
@@ -82,12 +82,21 @@ public class UDPHandler implements I2PSessionMuxedListener {
     }
 
     public void start() {
+        _running = true;
         (new I2PAppThread(new Waiter(), "ZzzOT UDP startup", true)).start();
+    }
+
+    /**
+     *  @since 0.20.0
+     */
+    public void stop() {
+        _running = false;
+        _cleaner.cancel();
     }
 
     private class Waiter implements Runnable {
         public void run() {
-            while (true) {
+            while (_running) {
                 // requires I2P 0.9.53 (1.7.0)
                 List<I2PSession> sessions = _tunnel.getSessions();
                 if (sessions.isEmpty()) {
