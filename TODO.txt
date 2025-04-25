@@ -1,11 +1,9 @@
 Configuration file:
 	- clean time
 	- max peers in response
-	- disable full scrapes
 	- disable all scrapes
-	- disable seedless
 
-Stop the cleaner
+Remove seedless
 
 Throttles:
 	- full scrapes
