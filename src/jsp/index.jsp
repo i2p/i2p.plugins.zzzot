@@ -22,28 +22,28 @@
 <b>Peers:</b> <%=torrents.countPeers()%><br>
 <b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
 <%
+    String host = request.getHeader("Host");
+    if (host != null) {
+        int colon = host.indexOf(":");
+        if (colon > 0)
+            host = host.substring(0, colon);
+        host = net.i2p.data.DataHelper.escapeHTML(host);
+        %><b>Announce URL:</b> <a href="http://<%=host%>/a"http://<%=host%>/a</a><br><%
+    }
     boolean udp = ZzzOTController.isUDPEnabled();
 %>
 <b>UDP Announce Support:</b><%=udp ? "yes" : "no"%><br>
 <%
     if (udp) {
+        int port = ZzzOTController.udpPort();
 %>
+        <b>UDP Announce URL:</b> <a href="udp://<%=host%>:<%=port%>/a"</a>udp://<%=host%>:<%=port%>/a</a><br>
         <b>UDP Connection Lifetime:</b> <%=torrents.getUDPLifetime() / 60%> minutes<br>
 <%
     }
 %>
 </p>
 <%
-/*
-        String host = request.getHeader("Host");
-        if (host != null) {
-            int colon = host.indexOf(":");
-            if (colon > 0)
-                host = host.substring(0, colon);
-            host = net.i2p.data.DataHelper.escapeHTML(host);
-            %><p><b>Now with UDP announce support!</b><br>udp://<%=host%>/</p><%
-        }
-*/
     } else {
 %>
 <p id="initializing"><b><i>Initializing OpenTracker&hellip;</i></b></p>

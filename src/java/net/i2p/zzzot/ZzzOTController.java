@@ -194,6 +194,21 @@ public class ZzzOTController implements ClientApp {
     }
 
     /**
+     *  @return 0 if not running
+     *  @since 0.20.0
+     */
+    public static int udpPort() {
+        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
+        if (mgr == null)
+            return 0;
+        ClientApp z = mgr.getRegisteredApp(NAME);
+        if (z == null)
+            return 0;
+        ZzzOTController ctrlr = (ZzzOTController) z;
+        return ctrlr.getUDPPort();
+    }
+
+    /**
      *  @since 0.20.0
      */
     public int getUDPPort() {
