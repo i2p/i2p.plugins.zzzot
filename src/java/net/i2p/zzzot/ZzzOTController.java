@@ -35,6 +35,8 @@ import net.i2p.data.DataHelper;
 import net.i2p.data.Destination;
 import net.i2p.data.PrivateKeyFile;
 import net.i2p.i2ptunnel.TunnelController;
+import net.i2p.stat.Rate;
+import net.i2p.stat.RateStat;
 import net.i2p.util.FileUtil;
 import net.i2p.util.I2PAppThread;
 import net.i2p.util.Log;
@@ -168,6 +170,20 @@ public class ZzzOTController implements ClientApp {
             return null;
         ZzzOTController ctrlr = (ZzzOTController) z;
         return ctrlr._zzzot.getDestCache();
+    }
+
+    /**
+     *  @return announces per minute, 0 if not running
+     *  @since 0.20.0
+     */
+    public static double getAnnounceRate() {
+        RateStat rs = I2PAppContext.getGlobalContext().statManager().getRate("plugin.zzzot.announces");
+        if (rs == null)
+            return 0;
+        Rate r = rs.getRate(5*60*1000);
+        if (r == null)
+            return 0;
+        return r.getAvgOrLifetimeAvg();
     }
 
     /**
