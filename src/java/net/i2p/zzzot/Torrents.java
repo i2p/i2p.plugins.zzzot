@@ -17,6 +17,7 @@ package net.i2p.zzzot;
  */
 
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.i2p.CoreVersion;
 import net.i2p.data.DataHelper;
@@ -34,6 +35,7 @@ public class Torrents extends ConcurrentHashMap<InfoHash, Peers> {
     private final SDSCache<PID> _pidCache;
     private final Integer _interval;
     private final int _udpLifetime;
+    private final AtomicInteger _announces = new AtomicInteger();
 
     /**
      *  @param interval in seconds
@@ -98,12 +100,35 @@ public class Torrents extends ConcurrentHashMap<InfoHash, Peers> {
     }
 
     /**
+     *  This is called for every announce except for event = STOPPED.
+     *  Hook it here to keep an announce counter.
+     *
+     *  @since 0.20.0
+     */
+    @Override
+    public Peers putIfAbsent(InfoHash ih, Peers p) {
+        _announces.incrementAndGet();
+        return super.putIfAbsent(ih, p);
+    }
+
+    /**
+     *  Return the number of announces since the last call.
+     *  Resets the counter to zero.
+     *
+     *  @since 0.20.0
+     */
+    public int getAnnounces() {
+        return _announces.getAndSet(0);
+    }
+
+    /**
      *  @since 0.12.0
      */
     @Override
     public void clear() {
         super.clear();
         clearCaches();
+        _announces.set(0);
     }
 
     /**

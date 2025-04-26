@@ -29,6 +29,7 @@ import net.i2p.util.SimpleTimer2;
  */
 class ZzzOT {
 
+    private final I2PAppContext _context;
     private final Torrents _torrents;
     private final Cleaner _cleaner;
     private final ConcurrentHashMap<String, String> _destCache = new ConcurrentHashMap<String, String>();
@@ -71,6 +72,7 @@ class ZzzOT {
         _torrents = new Torrents(interval, lifetime);
         EXPIRE_TIME = 1000 * (interval + interval / 2);
         _cleaner  = new Cleaner(ctx);
+        _context = ctx;
     }
 
     Torrents getTorrents() {
@@ -84,12 +86,19 @@ class ZzzOT {
 
     void start() {
         _cleaner.forceReschedule(CLEAN_TIME);
+        long[] r = new long[] { 5*60*1000 };
+        _context.statManager().createRequiredRateStat("plugin.zzzot.announces", "Announces per minute", "Plugins", r);
+        _context.statManager().createRequiredRateStat("plugin.zzzot.peers", "Number of peers", "Plugins", r);
+        _context.statManager().createRequiredRateStat("plugin.zzzot.torrents", "Number of torrents", "Plugins", r);
     }
 
     void stop() {
         _cleaner.cancel();
         _torrents.clear();
         _destCache.clear();
+        _context.statManager().removeRateStat("plugin.zzzot.announces");
+        _context.statManager().removeRateStat("plugin.zzzot.peers");
+        _context.statManager().removeRateStat("plugin.zzzot.torrents");
     }
 
     private class Cleaner extends SimpleTimer2.TimedEvent {
@@ -103,6 +112,7 @@ class ZzzOT {
 
         public void timeReached() {
             long now = System.currentTimeMillis();
+            int peers = 0;
             for (Iterator<Peers> iter = _torrents.values().iterator(); iter.hasNext(); ) {
                 Peers p = iter.next();
                 int recent = 0;
@@ -115,10 +125,15 @@ class ZzzOT {
                 }
                 if (recent <= 0)
                     iter.remove();
+                else
+                    peers += recent;
             }
             if (_runCount.incrementAndGet() % (DEST_CACHE_CLEAN_TIME / CLEAN_TIME) == 0) {
                 _destCache.clear();
             }
+            _context.statManager().addRateData("plugin.zzzot.announces",  _torrents.getAnnounces() / (CLEAN_TIME / (60*1000L)));
+            _context.statManager().addRateData("plugin.zzzot.peers",  peers);
+            _context.statManager().addRateData("plugin.zzzot.torrents",  _torrents.size());
             schedule(CLEAN_TIME);
         }
     }
