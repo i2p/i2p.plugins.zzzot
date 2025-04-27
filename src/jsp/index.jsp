@@ -20,7 +20,7 @@
 <p id="totals">
 <b>Torrents:</b> <%=torrents.size()%><br>
 <b>Peers:</b> <%=torrents.countPeers()%><br>
-<b>Announce Rate:</b> <%=String.format(java.util.Locale.US, "%.1g", ZzzOTController.getAnnounceRate())%> / minute<br>
+<b>Announce Rate:</b> <%=String.format(java.util.Locale.US, "%.1f", ZzzOTController.getAnnounceRate())%> / minute<br>
 <b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
 <%
     String host = ZzzOTController.b32();
