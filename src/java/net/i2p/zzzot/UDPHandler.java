@@ -181,15 +181,18 @@ public class UDPHandler implements I2PSessionMuxedListener {
             if (from != null) {
                 if (_log.shouldWarn())
                     _log.warn("dropping repliable announce");
+                // TODO send error?
                 return;
             }
             handleAnnounce(session, connID, fromPort, data);
         } else if (action == ACTION_SCRAPE) {
             if (_log.shouldWarn())
                 _log.warn("got unsupported scrape");
+            // TODO send error?
         } else {
             if (_log.shouldWarn())
                 _log.warn("dropping bad action " + action);
+            // TODO send error?
         }
     }
 
@@ -207,7 +210,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         try {
             session.sendMessage(from, resp, I2PSession.PROTO_DATAGRAM_RAW, PORT, fromPort);
             if (_log.shouldDebug())
-                _log.debug("sent connect reply to " + from);
+                _log.debug("sent connect reply with conn ID " + connID + " to " + from.toBase32());
             _connectCache.put(Long.valueOf(connID), new DestAndTime(from, _context.clock().now()));
         } catch (I2PSessionException ise) {
             if (_log.shouldWarn())
@@ -228,7 +231,8 @@ public class UDPHandler implements I2PSessionMuxedListener {
         DestAndTime dat = _connectCache.get(Long.valueOf(connID));
         if (dat == null) {
             if (_log.shouldWarn())
-                _log.warn("no connID found " + connID);
+                _log.warn("conn ID not found: " + connID);
+            // TODO send error?
             return;
         }
         Destination from = dat.dest;
