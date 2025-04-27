@@ -75,6 +75,7 @@ public class ZzzOTController implements ClientApp {
     private final boolean _enableUDP;
     private final int _udpPort;
     private UDPHandler _udp;
+    private String _b32;
 
     private ClientAppState _state = UNINITIALIZED;
 
@@ -145,14 +146,23 @@ public class ZzzOTController implements ClientApp {
     /**
      *  @return null if not running
      */
-    public static Torrents getTorrents() {
+    private static ZzzOTController getThis() {
         ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
         if (mgr == null)
             return null;
         ClientApp z = mgr.getRegisteredApp(NAME);
         if (z == null)
             return null;
-        ZzzOTController ctrlr = (ZzzOTController) z;
+        return (ZzzOTController) z;
+    }
+
+    /**
+     *  @return null if not running
+     */
+    public static Torrents getTorrents() {
+        ZzzOTController ctrlr = getThis();
+        if (ctrlr == null)
+            return null;
         return ctrlr._zzzot.getTorrents();
     }
 
@@ -162,13 +172,9 @@ public class ZzzOTController implements ClientApp {
      *  @since 0.9.14
      */
     public static ConcurrentMap<String, String> getDestCache() {
-        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
-        if (mgr == null)
+        ZzzOTController ctrlr = getThis();
+        if (ctrlr == null)
             return null;
-        ClientApp z = mgr.getRegisteredApp(NAME);
-        if (z == null)
-            return null;
-        ZzzOTController ctrlr = (ZzzOTController) z;
         return ctrlr._zzzot.getDestCache();
     }
 
@@ -191,13 +197,9 @@ public class ZzzOTController implements ClientApp {
      *  @since 0.20.0
      */
     public static boolean isUDPEnabled() {
-        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
-        if (mgr == null)
+        ZzzOTController ctrlr = getThis();
+        if (ctrlr == null)
             return false;
-        ClientApp z = mgr.getRegisteredApp(NAME);
-        if (z == null)
-            return false;
-        ZzzOTController ctrlr = (ZzzOTController) z;
         return ctrlr.getUDPEnabled();
     }
 
@@ -214,13 +216,9 @@ public class ZzzOTController implements ClientApp {
      *  @since 0.20.0
      */
     public static int udpPort() {
-        ClientAppManager mgr = I2PAppContext.getGlobalContext().clientAppManager();
-        if (mgr == null)
+        ZzzOTController ctrlr = getThis();
+        if (ctrlr == null)
             return 0;
-        ClientApp z = mgr.getRegisteredApp(NAME);
-        if (z == null)
-            return 0;
-        ZzzOTController ctrlr = (ZzzOTController) z;
         return ctrlr.getUDPPort();
     }
 
@@ -229,6 +227,23 @@ public class ZzzOTController implements ClientApp {
      */
     public int getUDPPort() {
         return _udpPort;
+    }
+
+    /**
+     *  @return null if not running
+     *  @since 0.20.0
+     */
+    public static String b32() {
+        ZzzOTController ctrlr = getThis();
+        if (ctrlr == null)
+            return null;
+        return ctrlr.getB32();
+    }
+    /**
+     *  @since 0.20.0
+     */
+    public String getB32() {
+        return _b32;
     }
 
     /**
@@ -284,14 +299,16 @@ public class ZzzOTController implements ClientApp {
         if (p == null || p.equals("4,0"))
             i2ptunnelProps.setProperty("tunnel.0.option.i2cp.leaseSetEncType", "4");
         TunnelController tun = new TunnelController(i2ptunnelProps, "tunnel.0.");
-        if (dest != null) {
+        if (dest == null) {
             // start in foreground so we can get the destination
             tun.startTunnel();
+            _b32 = tun.getMyDestHashBase32();
             List msgs = tun.clearMessages();
             for (Object s : msgs) {
                  _log.logAlways(Log.INFO, "NOTICE: ZzzOT Tunnel message: " + s);
             }
         } else {
+            _b32 = dest.calculateHash().toBase32();
             tun.startTunnelBackground();
         }
         _tunnel = tun;

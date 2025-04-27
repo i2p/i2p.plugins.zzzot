@@ -23,17 +23,9 @@
 <b>Announce Rate:</b> <%=String.format(java.util.Locale.US, "%.1g", ZzzOTController.getAnnounceRate())%> / minute<br>
 <b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
 <%
-    String host = request.getHeader("Host");
+    String host = ZzzOTController.b32();
     if (host != null) {
-        int colon = host.indexOf(":");
-        if (colon > 0)
-            host = host.substring(0, colon);
-        if (host.endsWith(".i2p")) {
-            host = net.i2p.data.DataHelper.escapeHTML(host);
             %><b>Announce URL:</b> <a href="http://<%=host%>/a">http://<%=host%>/a</a><br><%
-        } else {
-            host = null;
-        }
     }
     boolean udp = ZzzOTController.isUDPEnabled();
 %>
