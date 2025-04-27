@@ -32,15 +32,15 @@
 <b>UDP Announce Support:</b> <%=udp ? "yes" : "no"%><br>
 <%
     if (udp) {
-        int port = ZzzOTController.udpPort();
-        if (host != null) {
-%>
-        <b>UDP Announce URL:</b> <a href="udp://<%=host%>:<%=port%>/"</a>udp://<%=host%>:<%=port%>/</a><br>
-<%
-        }
 %>
         <b>UDP Connection Lifetime:</b> <%=torrents.getUDPLifetime() / 60%> minutes<br>
 <%
+        if (host != null) {
+            int port = ZzzOTController.udpPort();
+%>
+            <b>UDP Announce URL:</b> <a href="udp://<%=host%>:<%=port%>/"</a>udp://<%=host%>:<%=port%>/</a><br>
+<%
+        }
     }
 %>
 </p>
