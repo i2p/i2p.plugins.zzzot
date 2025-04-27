@@ -28,7 +28,7 @@ import net.i2p.I2PAppContext;
 import net.i2p.client.I2PSession;
 import net.i2p.client.I2PSessionException;
 import net.i2p.client.I2PSessionMuxedListener;
-import net.i2p.client.datagram.I2PDatagramDissector;
+import net.i2p.client.datagram.Datagram2;
 import net.i2p.data.DataHelper;
 import net.i2p.data.Destination;
 import net.i2p.i2ptunnel.I2PTunnel;
@@ -48,7 +48,6 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private final Log _log;
     private final I2PTunnel _tunnel;
     private final ZzzOT _zzzot;
-    private final I2PDatagramDissector _diss;
     // conn ID to dest and time added
     private final Map<Long, DestAndTime> _connectCache;
     private final Cleaner _cleaner;
@@ -74,7 +73,6 @@ public class UDPHandler implements I2PSessionMuxedListener {
         _log = ctx.logManager().getLog(UDPHandler.class);
         _tunnel = tunnel;
         _zzzot = zzzot;
-        _diss = new I2PDatagramDissector();
         _connectCache = new ConcurrentHashMap<Long, DestAndTime>();
         CLEAN_TIME = (zzzot.getTorrents().getUDPLifetime() + 60) * 1000;
         PORT = port;
@@ -104,8 +102,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
                     continue;
                 }
                 I2PSession session = sessions.get(0);
-                // TODO switch to Datagram2
-                session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM, PORT);
+                session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM2, PORT);
                 session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM_RAW, PORT);
                 _cleaner.schedule(CLEAN_TIME);
                 if (_log.shouldInfo())
@@ -130,13 +127,12 @@ public class UDPHandler implements I2PSessionMuxedListener {
         try {
             // receive message
             byte[] msg = session.receiveMessage(id);
-            // TODO switch to Datagram2
-            if (proto == I2PSession.PROTO_DATAGRAM) {
+            if (proto == I2PSession.PROTO_DATAGRAM2) {
                 // load datagram into it
-                _diss.loadI2PDatagram(msg);
-                handle(session, _diss.getSender(), fromPort, _diss.getPayload());
+                Datagram2 dg = Datagram2.load(_context, session, msg);
+                handle(session, dg.getSender(), fromPort, dg.getPayload());
             } else if (proto == I2PSession.PROTO_DATAGRAM_RAW) {
-                handle(session, null, fromPort, _diss.getPayload());
+                handle(session, null, fromPort, msg);
             } else {
                 if (_log.shouldWarn())
                     _log.warn("dropping message with unknown protocol " + proto);
