@@ -29,6 +29,7 @@
 	final int MAX_RESPONSES = 25;
 	final boolean ALLOW_IP_MISMATCH = false;
 	final boolean ALLOW_COMPACT_RESPONSE = true;
+	final boolean ALLOW_NONCOMPACT_RESPONSE = false;
 
 	// so the chars will turn into bytes correctly
 	request.setCharacterEncoding("ISO-8859-1");
@@ -67,6 +68,11 @@
 	        //response.setStatus(403, msg);
 	        response.setStatus(403);
 	}
+
+	if (!compact && !ALLOW_NONCOMPACT_RESPONSE && !fail) {
+		fail = true;
+		msg = "non-compact responses unsupported";
+        }
 
 	if (info_hash == null && !fail) {
 		fail = true;
@@ -236,18 +242,15 @@
 				}
 			}
 			if (compact) {
-				// old experimental way - list of hashes
-				//List<String> peerhashes = new ArrayList(peerlist.size());
-				//for (Peer pe : peerlist) {
-				//	peerhashes.add(pe.getHash());
-				//}
-				// new way - one big string
+				// one big string
 				byte[] peerhashes = new byte[32 * peerlist.size()];
 				for (int i = 0; i < peerlist.size(); i++)
-					System.arraycopy(peerlist.get(i).getHash().getBytes("ISO-8859-1"), 0, peerhashes, i * 32, 32);
+					System.arraycopy(peerlist.get(i).getHashBytes(), 0, peerhashes, i * 32, 32);
 				m.put("peers", peerhashes);
-			} else {
+			} else if (ALLOW_NONCOMPACT_RESPONSE) {
 				m.put("peers", peerlist);
+			} else {
+				// won't get here
 			}
 		}
 	}

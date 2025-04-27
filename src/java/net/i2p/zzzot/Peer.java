@@ -16,12 +16,10 @@ package net.i2p.zzzot;
  *
  */
 
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import net.i2p.crypto.SHA256Generator;
-import net.i2p.data.Base64;
+import net.i2p.data.Base32;
 import net.i2p.data.Destination;
 import net.i2p.data.Hash;
 
@@ -45,7 +43,7 @@ public class Peer extends HashMap<String, Object> {
         put("peer id", id);
         put("port", PORT);
         // cache the 520-byte address strings
-        String dest = address.toBase64() + ".i2p";
+        String dest = address.toBase32().substring(0, 52);
 	String oldDest = destCache.putIfAbsent(dest, dest);
         if (oldDest != null)
             dest = oldDest;
@@ -65,20 +63,11 @@ public class Peer extends HashMap<String, Object> {
         return lastSeen;
     }
 
-    /** convert b64.i2p to a Hash, then to a binary string */
-    /* or should we just store it in the constructor? cache it? */
-    public String getHash() {
-        try {
-            return new String(getHashObject().getData(), "ISO-8859-1");
-        } catch (UnsupportedEncodingException uee) { return null; }
-    }
-
     /**
-     *  @since 0.19
+     *  @since 0.20
      */
-    public Hash getHashObject() {
+    public byte[] getHashBytes() {
         String ip = (String) get("ip");
-        byte[] b = Base64.decode(ip.substring(0, ip.length() - 4));
-        return SHA256Generator.getInstance().calculateHash(b);
+        return Base32.decode(ip);
     }
 }
