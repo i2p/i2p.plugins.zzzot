@@ -43,7 +43,7 @@
         int port = ZzzOTController.udpPort();
         if (host != null) {
 %>
-        <b>UDP Announce URL:</b> <a href="udp://<%=host%>:<%=port%>/a"</a>udp://<%=host%>:<%=port%>/a</a><br>
+        <b>UDP Announce URL:</b> <a href="udp://<%=host%>:<%=port%>/"</a>udp://<%=host%>:<%=port%>/a</a><br>
 <%
         }
 %>
