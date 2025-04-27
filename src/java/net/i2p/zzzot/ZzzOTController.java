@@ -280,8 +280,9 @@ public class ZzzOTController implements ClientApp {
             _log.error("Cannot open " + i2ptunnelConfig.getAbsolutePath() + ' ' + ioe);
             throw new IllegalArgumentException("Cannot open " + i2ptunnelConfig.getAbsolutePath() + ' ' + ioe);
         }
-        if (i2ptunnelProps.getProperty("tunnel.0.option.i2cp.leaseSetEncType") == null)
-            i2ptunnelProps.setProperty("tunnel.0.option.i2cp.leaseSetEncType", "4,0");
+        String p = i2ptunnelProps.getProperty("tunnel.0.option.i2cp.leaseSetEncType");
+        if (p == null || p.equals("4,0"))
+            i2ptunnelProps.setProperty("tunnel.0.option.i2cp.leaseSetEncType", "4");
         TunnelController tun = new TunnelController(i2ptunnelProps, "tunnel.0.");
         if (dest != null) {
             // start in foreground so we can get the destination

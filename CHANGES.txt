@@ -4,6 +4,7 @@
     s/<Ref id=/<Ref refid=/g
   - Add interval to stats page
   - Add stats to I2P stats subsystem
+  - Remove ElGamal support
 
 2024-04-07 [0.19.0]
   - Disable full scrape by default
