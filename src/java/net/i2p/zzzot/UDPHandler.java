@@ -35,6 +35,7 @@ import net.i2p.data.Destination;
 import net.i2p.data.Hash;
 import net.i2p.i2ptunnel.I2PTunnel;
 import net.i2p.util.I2PAppThread;
+import net.i2p.util.LHMCache;
 import net.i2p.util.Log;
 import net.i2p.util.SimpleTimer2;
 
@@ -51,6 +52,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private final I2PTunnel _tunnel;
     private final ZzzOT _zzzot;
     private final long sipk0, sipk1;
+    private final Map<Hash, Destination> _destCache;
     private volatile boolean _running;
 
     // The listen port.
@@ -81,6 +83,9 @@ public class UDPHandler implements I2PSessionMuxedListener {
         PORT = port;
         sipk0 = ctx.random().nextLong();
         sipk1 = ctx.random().nextLong();
+        // the highest-traffic zzzot is running about 3000 announces/minute,
+        // give us enough to respond to the first announce after the connection
+        _destCache = new LHMCache<Hash, Destination>(1024);
     }
 
     public void start() {
@@ -224,6 +229,9 @@ public class UDPHandler implements I2PSessionMuxedListener {
             session.sendMessage(from, resp, I2PSession.PROTO_DATAGRAM_RAW, PORT, fromPort);
             if (_log.shouldDebug())
                 _log.debug("sent connect reply with conn ID " + connID + " to " + from.toBase32());
+            synchronized(_destCache) {
+                _destCache.put(from.calculateHash(), from);
+            }
         } catch (I2PSessionException ise) {
             if (_log.shouldWarn())
                 _log.warn("error sending connect reply", ise);
@@ -386,8 +394,13 @@ public class UDPHandler implements I2PSessionMuxedListener {
      *  @return null on failure
      */
     private Destination lookup(I2PSession session, Hash hash) {
+        Destination rv;
+        synchronized(_destCache) {
+            rv = _destCache.get(hash);
+        }
+        if (rv != null)
+            return rv;
         // TODO use a waiter
-        Destination rv = null;
         try {
             rv = session.lookupDest(hash, LOOKUP_TIMEOUT);
         } catch (I2PSessionException ise) {}
