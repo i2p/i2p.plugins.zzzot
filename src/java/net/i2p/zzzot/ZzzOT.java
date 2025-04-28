@@ -36,8 +36,7 @@ class ZzzOT {
 
     private static final String PROP_INTERVAL = "interval";
     private static final String PROP_UDP_LIFETIME = "lifetime";
-    private static final long CLEAN_TIME = 4*60*1000;
-    private static final long DEST_CACHE_CLEAN_TIME = 3*60*60*1000;
+    private static final long CLEAN_TIME = 2*60*1000;
     private static final int DEFAULT_INTERVAL = 27*60;
     private static final int DEFAULT_UDP_LIFETIME = 20*60;
     private static final int MIN_INTERVAL = 15*60;
