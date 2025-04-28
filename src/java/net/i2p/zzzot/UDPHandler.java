@@ -303,8 +303,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         } else {
             Peer p = peers.get(pid);
             if (p == null) {
-                ConcurrentMap<String, String> destCache = _zzzot.getDestCache();
-                p = new Peer(pid.getData(), from, destCache);
+                p = new Peer(pid.getData(), from);
                 Peer p2 = peers.putIfAbsent(pid, p);
                 if (p2 != null)
                     p = p2;

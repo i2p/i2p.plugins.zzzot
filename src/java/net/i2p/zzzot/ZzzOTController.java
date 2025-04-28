@@ -166,18 +166,6 @@ public class ZzzOTController implements ClientApp {
         return ctrlr._zzzot.getTorrents();
     }
 
-
-    /**
-     *  @return null if not running
-     *  @since 0.9.14
-     */
-    public static ConcurrentMap<String, String> getDestCache() {
-        ZzzOTController ctrlr = getThis();
-        if (ctrlr == null)
-            return null;
-        return ctrlr._zzzot.getDestCache();
-    }
-
     /**
      *  @return announces per minute, 0 if not running
      *  @since 0.20.0

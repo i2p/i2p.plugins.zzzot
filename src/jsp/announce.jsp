@@ -204,8 +204,7 @@
 		// fixme same peer id, different dest
 		Peer p = peers.get(pid);
 		if (p == null) {
-		  	ConcurrentMap<String, String> destCache = ZzzOTController.getDestCache();
-			p = new Peer(pid.getData(), d, destCache);
+			p = new Peer(pid.getData(), d);
 			// don't add if spoofed
 			if (matchIP) {
 				Peer p2 = peers.putIfAbsent(pid, p);
@@ -248,7 +247,15 @@
 					System.arraycopy(peerlist.get(i).getHashBytes(), 0, peerhashes, i * 32, 32);
 				m.put("peers", peerhashes);
 			} else if (ALLOW_NONCOMPACT_RESPONSE) {
-				m.put("peers", peerlist);
+				// This requires the Peer entries to be Maps
+				// so they can be bencoded, but we don't save
+				// the full Destination any more, and Peer does not.
+				// extend HashMap, to greatly reduce memory usage.
+				// We could create a Map here  with the b32 as the IP,
+				// but that's nonstandard. So if non-compact is enabled,
+				// don't return any peers.
+				//m.put("peers", peerlist);
+				m.put("peers", java.util.Collections.EMPTY_LIST);
 			} else {
 				// won't get here
 			}

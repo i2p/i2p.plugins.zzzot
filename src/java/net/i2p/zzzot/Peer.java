@@ -16,38 +16,24 @@ package net.i2p.zzzot;
  *
  */
 
-import java.util.HashMap;
-import java.util.concurrent.ConcurrentMap;
-
-import net.i2p.data.Base32;
 import net.i2p.data.Destination;
 import net.i2p.data.Hash;
 
 /*
  *  A single peer for a single torrent.
- *  Save a couple stats, and implements
- *  a Map so we can BEncode it
- *  So it's like PeerID but in reverse - we make a Map from the
- *  data. PeerID makes the data from a Map.
+ *  Save a couple stats. We no longer support non-compact
+ *  announces, so this is no longer a Map that can be BEncoded.
+ *  See announce.jsp.
  */
-public class Peer extends HashMap<String, Object> {
+public class Peer {
 
+    private final Hash hash;
     private long lastSeen;
     private long bytesLeft;
     private static final Integer PORT = Integer.valueOf(6881);
 
-    public Peer(byte[] id, Destination address, ConcurrentMap<String, String> destCache) {
-        super(3);
-        if (id.length != 20)
-            throw new IllegalArgumentException("Bad peer ID length: " + id.length);
-        put("peer id", id);
-        put("port", PORT);
-        // cache the 520-byte address strings
-        String dest = address.toBase32().substring(0, 52);
-	String oldDest = destCache.putIfAbsent(dest, dest);
-        if (oldDest != null)
-            dest = oldDest;
-        put("ip", dest);
+    public Peer(byte[] id, Destination address) {
+        hash = address.calculateHash();
     }
 
     public void setLeft(long l) {
@@ -67,7 +53,6 @@ public class Peer extends HashMap<String, Object> {
      *  @since 0.20
      */
     public byte[] getHashBytes() {
-        String ip = (String) get("ip");
-        return Base32.decode(ip);
+        return hash.getData();
     }
 }

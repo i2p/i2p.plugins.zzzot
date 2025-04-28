@@ -32,7 +32,6 @@ class ZzzOT {
     private final I2PAppContext _context;
     private final Torrents _torrents;
     private final Cleaner _cleaner;
-    private final ConcurrentHashMap<String, String> _destCache = new ConcurrentHashMap<String, String>();
     private final long EXPIRE_TIME;
 
     private static final String PROP_INTERVAL = "interval";
@@ -79,11 +78,6 @@ class ZzzOT {
         return _torrents;
     }
 
-    /** @since 0.9.14 */
-    ConcurrentHashMap<String, String> getDestCache() {
-        return _destCache;
-    }
-
     void start() {
         _cleaner.forceReschedule(CLEAN_TIME);
         long[] r = new long[] { 5*60*1000 };
@@ -95,7 +89,6 @@ class ZzzOT {
     void stop() {
         _cleaner.cancel();
         _torrents.clear();
-        _destCache.clear();
         _context.statManager().removeRateStat("plugin.zzzot.announces");
         _context.statManager().removeRateStat("plugin.zzzot.peers");
         _context.statManager().removeRateStat("plugin.zzzot.torrents");
@@ -127,9 +120,6 @@ class ZzzOT {
                     iter.remove();
                 else
                     peers += recent;
-            }
-            if (_runCount.incrementAndGet() % (DEST_CACHE_CLEAN_TIME / CLEAN_TIME) == 0) {
-                _destCache.clear();
             }
             _context.statManager().addRateData("plugin.zzzot.announces",  _torrents.getAnnounces() / (CLEAN_TIME / (60*1000L)));
             _context.statManager().addRateData("plugin.zzzot.peers",  peers);
