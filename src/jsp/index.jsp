@@ -20,19 +20,31 @@
 <p id="totals">
 <b>Torrents:</b> <%=torrents.size()%><br>
 <b>Peers:</b> <%=torrents.countPeers()%><br>
-<b>Announce Rate:</b> <%=String.format(java.util.Locale.US, "%.1f", ZzzOTController.getAnnounceRate())%> / minute<br>
+<%
+    boolean udp = ZzzOTController.isUDPEnabled();
+    if (udp) {
+%>
+        <b>Total Announce Rate:</b>
+<%
+    } else {
+%>
+        <b>Announce Rate:</b>
+<%
+    }
+%>
+<%=String.format(java.util.Locale.US, "%.1f", ZzzOTController.getAnnounceRate())%> / minute<br>
 <b>Announce Interval:</b> <%=torrents.getInterval() / 60%> minutes<br>
 <%
     String host = ZzzOTController.b32();
     if (host != null) {
             %><b>Announce URL:</b> <a href="http://<%=host%>/a">http://<%=host%>/a</a><br><%
     }
-    boolean udp = ZzzOTController.isUDPEnabled();
 %>
 <b>UDP Announce Support:</b> <%=udp ? "yes" : "no"%><br>
 <%
     if (udp) {
 %>
+        <b>UDP Announce Rate:</b> <%=String.format(java.util.Locale.US, "%.1f", ZzzOTController.getUDPAnnounceRate())%> / minute<br>
         <b>UDP Connection Lifetime:</b> <%=torrents.getUDPLifetime() / 60%> minutes<br>
 <%
         if (host != null) {

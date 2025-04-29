@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import net.i2p.I2PAppContext;
 import net.i2p.client.I2PSession;
@@ -51,8 +52,10 @@ public class UDPHandler implements I2PSessionMuxedListener {
     private final Log _log;
     private final I2PTunnel _tunnel;
     private final ZzzOT _zzzot;
+    private final Cleaner _cleaner;
     private final long sipk0, sipk1;
     private final Map<Hash, Destination> _destCache;
+    private final AtomicInteger _announces = new AtomicInteger();
     private volatile boolean _running;
 
     // The listen port.
@@ -70,6 +73,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
     // keep it short, we should have the leaseset
     private final long LOOKUP_TIMEOUT = 1000;
     private final long CLEAN_TIME;
+    private final long STAT_TIME = 2*60*1000;
     private static final byte[] INVALID = DataHelper.getUTF8("Invalid connection ID");
     private static final byte[] PROTOCOL = DataHelper.getUTF8("Bad protocol");
     private static final byte[] SCRAPE = DataHelper.getUTF8("Scrape unsupported");
@@ -81,6 +85,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         _zzzot = zzzot;
         CLEAN_TIME = (zzzot.getTorrents().getUDPLifetime() + 60) * 1000;
         PORT = port;
+        _cleaner = new Cleaner();
         sipk0 = ctx.random().nextLong();
         sipk1 = ctx.random().nextLong();
         // the highest-traffic zzzot is running about 3000 announces/minute,
@@ -91,6 +96,8 @@ public class UDPHandler implements I2PSessionMuxedListener {
     public void start() {
         _running = true;
         (new I2PAppThread(new Waiter(), "ZzzOT UDP startup", true)).start();
+        long[] r = new long[] { 5*60*1000 };
+        _context.statManager().createRequiredRateStat("plugin.zzzot.announces.udp", "UDP announces per minute", "Plugins", r);
     }
 
     /**
@@ -98,6 +105,9 @@ public class UDPHandler implements I2PSessionMuxedListener {
      */
     public void stop() {
         _running = false;
+        _cleaner.cancel();
+        _context.statManager().removeRateStat("plugin.zzzot.announces.udp");
+        _announces.set(0);
     }
 
     private class Waiter implements Runnable {
@@ -112,6 +122,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
                 I2PSession session = sessions.get(0);
                 session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM2, PORT);
                 session.addMuxedSessionListener(UDPHandler.this, I2PSession.PROTO_DATAGRAM3, PORT);
+                _cleaner.schedule(STAT_TIME);
                 if (_log.shouldInfo())
                     _log.info("got session");
                 break;
@@ -154,6 +165,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
     public void reportAbuse(I2PSession arg0, int arg1) {}
 
     public void disconnected(I2PSession arg0) {
+        _cleaner.cancel();
     }
 
     public void errorOccurred(I2PSession arg0, String arg1, Throwable arg2) {
@@ -286,6 +298,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         Torrents torrents = _zzzot.getTorrents();
         Peers peers = torrents.get(ih);
         if (peers == null && event != EVENT_STOPPED) {
+            _announces.incrementAndGet();
             peers = new Peers();
             Peers p2 = torrents.putIfAbsent(ih, peers);
             if (p2 != null)
@@ -432,5 +445,17 @@ public class UDPHandler implements I2PSessionMuxedListener {
         DataHelper.toLong8(buf, 32, time);
         c = SipHashInline.hash24(sipk0, sipk1, buf);
         return cid == c;
+    }
+
+    /**
+     *  Update the announce stat and set the announce count to 0
+     */
+    private class Cleaner extends SimpleTimer2.TimedEvent {
+        public Cleaner() { super(_context.simpleTimer2()); }
+        public void timeReached() {
+            long count = _announces.getAndSet(0);
+            _context.statManager().addRateData("plugin.zzzot.announces.udp",  count / (STAT_TIME / (60*1000L)));
+            schedule(STAT_TIME);
+        }
     }
 }

@@ -80,7 +80,7 @@ class ZzzOT {
     void start() {
         _cleaner.forceReschedule(CLEAN_TIME);
         long[] r = new long[] { 5*60*1000 };
-        _context.statManager().createRequiredRateStat("plugin.zzzot.announces", "Announces per minute", "Plugins", r);
+        _context.statManager().createRequiredRateStat("plugin.zzzot.announces", "Total announces per minute", "Plugins", r);
         _context.statManager().createRequiredRateStat("plugin.zzzot.peers", "Number of peers", "Plugins", r);
         _context.statManager().createRequiredRateStat("plugin.zzzot.torrents", "Number of torrents", "Plugins", r);
     }

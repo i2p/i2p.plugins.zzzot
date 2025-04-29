@@ -181,6 +181,20 @@ public class ZzzOTController implements ClientApp {
     }
 
     /**
+     *  @return announces per minute, 0 if not running or UDP not enabled
+     *  @since 0.20.0
+     */
+    public static double getUDPAnnounceRate() {
+        RateStat rs = I2PAppContext.getGlobalContext().statManager().getRate("plugin.zzzot.announces.udp");
+        if (rs == null)
+            return 0;
+        Rate r = rs.getRate(5*60*1000);
+        if (r == null)
+            return 0;
+        return r.getAvgOrLifetimeAvg();
+    }
+
+    /**
      *  @return false if not running
      *  @since 0.20.0
      */

@@ -4,7 +4,11 @@
     s/<Ref id=/<Ref refid=/g
   - Add interval to stats page
   - Add stats to I2P stats subsystem
+  - Show announce URLs on stats page
   - Remove ElGamal support
+  - Remove support for non-compact announce replies
+  - Reduce memory usage
+  - Remove seedless support
 
 2024-04-07 [0.19.0]
   - Disable full scrape by default
