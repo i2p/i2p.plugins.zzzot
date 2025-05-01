@@ -36,6 +36,13 @@ public class Peer {
         hash = address.calculateHash();
     }
 
+    /**
+     *  @since 0.20.0
+     */
+    public Peer(byte[] id, Hash h) {
+        hash = h;
+    }
+
     public void setLeft(long l) {
         bytesLeft = l;
         lastSeen = System.currentTimeMillis();
