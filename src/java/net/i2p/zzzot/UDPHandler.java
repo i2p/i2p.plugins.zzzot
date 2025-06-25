@@ -299,6 +299,7 @@ public class UDPHandler implements I2PSessionMuxedListener {
         // ignored
         //long ip = DataHelper.fromLong(data, 84, 4);
         //long key = DataHelper.fromLong(data, 88, 4);
+        // Note: BEP 15 spec default is -1 but we read as a positive long
         long want = DataHelper.fromLong(data, 92, 4);
         if (want > MAX_RESPONSES)
             want = MAX_RESPONSES;
@@ -357,16 +358,15 @@ public class UDPHandler implements I2PSessionMuxedListener {
         }
 
         int count = peerlist != null ? peerlist.size() : 0;
-        byte[] resp = new byte[22 + (32 * count)];
+        byte[] resp = new byte[20 + (32 * count)];
         resp[3] = (byte) ACTION_ANNOUNCE;
         DataHelper.toLong(resp, 4, 4, transID);
         DataHelper.toLong(resp, 8, 4, torrents.getInterval());
         DataHelper.toLong(resp, 12, 4, size - seeds);
         DataHelper.toLong(resp, 16, 4, seeds);
-        DataHelper.toLong(resp, 20, 2, count);
         if (peerlist != null) {
             for (int i = 0; i < count; i++) {
-                System.arraycopy(peerlist.get(i).getHashBytes(), 0, resp, 22 + (i * 32), 32);
+                System.arraycopy(peerlist.get(i).getHashBytes(), 0, resp, 20 + (i * 32), 32);
             }
         }
 
