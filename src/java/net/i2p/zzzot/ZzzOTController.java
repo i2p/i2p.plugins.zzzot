@@ -82,7 +82,7 @@ public class ZzzOTController implements ClientApp {
     private static final String NAME = "ZzzOT";
     private static final String DEFAULT_SITENAME = "ZZZOT";
     private static final String PROP_SITENAME = "sitename";
-    private static final String VERSION = "0.20.0-beta2";
+    private static final String VERSION = "0.20.0-beta3";
     private static final String DEFAULT_SHOWFOOTER = "true";
     private static final String PROP_SHOWFOOTER = "showfooter";
     private static final String DEFAULT_FOOTERTEXT = "Running <a href=\"http://git.idk.i2p/i2p-hackers/i2p.plugins.zzzot\" target=\"_blank\">ZZZOT</a> " + VERSION;
